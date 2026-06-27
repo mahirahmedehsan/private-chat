@@ -133,7 +133,18 @@ export default function ChatRoom() {
     if (!data || !e2eeReady) return
     const allMessages = data.pages.flatMap((p) => p.messages || []).reverse()
     decryptMessagesInList(allMessages)
-  }, [e2eeReady, otherPublicKey])
+  }, [data, e2eeReady, otherPublicKey])
+
+  useEffect(() => {
+    if (!e2eeReady || !otherPublicKey) return
+    const msgs = messages[conversationId] || []
+    const undecrypted = msgs.filter(
+      (m) => m.encryptedContent && !decryptedMessages[m._id]
+    )
+    if (undecrypted.length > 0) {
+      decryptMessagesInList(undecrypted)
+    }
+  }, [messages[conversationId], e2eeReady, otherPublicKey, decryptedMessages])
 
   const scrollToBottom = useCallback((smooth = false) => {
     messagesEndRef.current?.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto' })
@@ -161,16 +172,14 @@ export default function ChatRoom() {
     const myKeyPair = e2eeReady ? await getKeyPair(user?.uid) : null
 
     let encryptedContent = null
-    let displayText = text || ''
 
     if (myKeyPair && otherPublicKey && e2eeEnabled && text) {
       encryptedContent = encryptMessage(text, otherPublicKey, myKeyPair.secretKey)
-      displayText = ''
     }
 
     const msg = {
       _id: tempId,
-      text: displayText,
+      text: text || '',
       encryptedContent,
       senderId: user?.uid,
       conversationId,
@@ -182,7 +191,7 @@ export default function ChatRoom() {
     dispatch(updateConversationLastMessage({
       conversationId,
       currentUserId: user?.uid,
-      message: { _id: tempId, text: displayText || '🔒', createdAt: msg.createdAt, senderId: user?.uid, ...(file ? { file } : {}) },
+      message: { _id: tempId, text: text || '🔒', createdAt: msg.createdAt, senderId: user?.uid, ...(file ? { file } : {}) },
     }))
     scrollToBottom()
 
@@ -190,7 +199,7 @@ export default function ChatRoom() {
     if (socket?.connected) {
       socket.emit('chat:send', {
         to: otherUser?.uid,
-        text: displayText || '',
+        text: encryptedContent ? '' : (text || ''),
         encryptedContent,
         conversationId,
         messageId: tempId,
@@ -201,7 +210,7 @@ export default function ChatRoom() {
       try {
         const res = await apiSendMessage({
           recipientId: otherUser?.uid,
-          text: displayText || '',
+          text: encryptedContent ? '' : (text || ''),
           encryptedContent,
           ...(file ? { file } : {}),
         })
@@ -607,9 +616,10 @@ export default function ChatRoom() {
               {(messages[conversationId] || []).map((msg) => {
                 const isEncrypted = !!msg.encryptedContent
                 const decryptedText = decryptedMessages[msg._id]
+                const isOwn = msg.senderId === user?.uid
                 const displayMsg = {
                   ...msg,
-                  text: isEncrypted
+                  text: isEncrypted && !isOwn
                     ? (decryptedText || '')
                     : msg.text,
                   isEncrypted,

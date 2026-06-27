@@ -9,6 +9,7 @@ import {
   googleProvider,
   createUserWithEmailAndPassword,
   auth,
+  GoogleAuthProvider,
 } from '../../config/firebase'
 import { loginWithGoogle, registerUser } from '../../api/auth'
 import { setupDrive } from '../../api/drive'
@@ -54,11 +55,15 @@ export default function Signup() {
     try {
       const result = await signInWithPopup(auth, googleProvider)
       const idToken = await result.user.getIdToken()
-      const { token, user } = await loginWithGoogle(idToken)
+      const credential = GoogleAuthProvider.credentialFromResult(result)
+      const googleAccessToken = credential?.accessToken
+      const { token, user, googleAccessToken: returnedToken } = await loginWithGoogle(idToken, googleAccessToken)
 
-      dispatch(setCredentials({ token, user }))
+      dispatch(setCredentials({ token, user, googleAccessToken: returnedToken || googleAccessToken }))
       navigate('/chat')
-      setupDrive().catch(() => {})
+      if (returnedToken || googleAccessToken) {
+        setupDrive().catch(() => {})
+      }
     } catch (err) {
       dispatch(setError(err.response?.data?.error?.message || err.message || 'Google signup failed'))
     }

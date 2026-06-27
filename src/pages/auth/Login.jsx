@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { FiMail, FiLock, FiMessageSquare } from 'react-icons/fi'
 import { FcGoogle } from 'react-icons/fc'
-import { signInWithPopup, googleProvider, signInWithEmailAndPassword, auth } from '../../config/firebase'
+import { signInWithPopup, googleProvider, signInWithEmailAndPassword, auth, GoogleAuthProvider } from '../../config/firebase'
 import { loginWithGoogle, loginUser } from '../../api/auth'
 import { setupDrive } from '../../api/drive'
 import { setCredentials, setLoading, setError } from '../../store/slices/authSlice'
@@ -47,11 +47,15 @@ export default function Login() {
     try {
       const result = await signInWithPopup(auth, googleProvider)
       const idToken = await result.user.getIdToken()
-      const { token, user } = await loginWithGoogle(idToken)
+      const credential = GoogleAuthProvider.credentialFromResult(result)
+      const googleAccessToken = credential?.accessToken
+      const { token, user, googleAccessToken: returnedToken } = await loginWithGoogle(idToken, googleAccessToken)
 
-      dispatch(setCredentials({ token, user }))
+      dispatch(setCredentials({ token, user, googleAccessToken: returnedToken || googleAccessToken }))
       navigate('/chat')
-      setupDrive().catch(() => {})
+      if (returnedToken || googleAccessToken) {
+        setupDrive().catch(() => {})
+      }
     } catch (err) {
       dispatch(setError(err.response?.data?.error?.message || err.message || 'Google login failed'))
     }

@@ -1,11 +1,11 @@
 import api from './axios'
 
 function mapResponse(data) {
-  return { token: data.accessToken, user: data.user }
+  return { token: data.accessToken, user: data.user, googleAccessToken: data.googleAccessToken }
 }
 
-export const loginWithGoogle = async (idToken) => {
-  const { data } = await api.post('/auth/google', { idToken })
+export const loginWithGoogle = async (idToken, googleAccessToken) => {
+  const { data } = await api.post('/auth/google', { idToken, googleAccessToken })
   return mapResponse(data)
 }
 
