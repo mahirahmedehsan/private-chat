@@ -86,7 +86,7 @@ export default function ChatBubble({ message, isOwn, onReact, onEdit, onDelete }
 
             {message.file && (
               <div className="mb-2">
-                {message.file.type?.startsWith('image/') ? (
+                {(message.file.type || message.file.mimetype)?.startsWith('image/') ? (
                   <img src={message.file.url} alt={message.file.name} className="max-w-full rounded-xl max-h-60 object-cover" />
                 ) : (
                   <a
