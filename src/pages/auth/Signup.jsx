@@ -62,7 +62,7 @@ export default function Signup() {
       dispatch(setCredentials({ token, user, googleAccessToken: returnedToken || googleAccessToken }))
       navigate('/chat')
       if (returnedToken || googleAccessToken) {
-        setupDrive().catch(() => {})
+        setupDrive().catch((e) => console.warn('Drive setup:', e.message))
       }
     } catch (err) {
       dispatch(setError(err.response?.data?.error?.message || err.message || 'Google signup failed'))

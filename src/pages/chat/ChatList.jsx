@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FiPlus, FiSearch, FiUsers, FiSlash } from 'react-icons/fi'
 import { getFriends, unblockUser, getBlockedList } from '../../api/friends'
+import { heartbeat } from '../../api/presence'
 import { setConversations, setActiveConversation } from '../../store/slices/chatSlice'
 import ConversationItem from '../../components/chat/ConversationItem'
 import TopBar from '../../components/layout/TopBar'
@@ -35,6 +36,7 @@ export default function ChatList() {
   const { data: friendsData, isLoading } = useQuery({
     queryKey: ['friends', 'accepted'],
     queryFn: () => getFriends({ status: 'accepted', limit: 100 }),
+    refetchInterval: 30000,
   })
 
   const { data: searchResults } = useQuery({
@@ -74,6 +76,13 @@ export default function ChatList() {
       dispatch(setConversations([...convs, ...preserved]))
     }
   }, [friendsData])
+
+  useEffect(() => {
+    heartbeat().catch(() => {})
+    const onFocus = () => heartbeat().catch(() => {})
+    window.addEventListener('focus', onFocus)
+    return () => window.removeEventListener('focus', onFocus)
+  }, [])
 
   const filteredConvs = [...conversations]
     .filter((c) =>

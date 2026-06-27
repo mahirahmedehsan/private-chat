@@ -93,9 +93,30 @@ export default function ChatRoom() {
       }
     }
 
+    const handleReceive = (data) => {
+      if (data.conversationId === conversationId) {
+        dispatch(addMessage({ conversationId, message: data }))
+        if (isNearBottom()) {
+          scrollToBottom(true)
+        }
+      }
+    }
+
+    const handleNotif = (data) => {
+      if (data.type === 'new_message' || data.type === 'friend_request' || data.type === 'friend_accepted') {
+        refetch()
+      }
+    }
+
     socket.on('e2ee:key-response', handleKeyResponse)
-    return () => socket.off('e2ee:key-response', handleKeyResponse)
-  }, [otherUser?.uid, dispatch])
+    socket.on('chat:receive', handleReceive)
+    socket.on('notification:new', handleNotif)
+    return () => {
+      socket.off('e2ee:key-response', handleKeyResponse)
+      socket.off('chat:receive', handleReceive)
+      socket.off('notification:new', handleNotif)
+    }
+  }, [otherUser?.uid, conversationId, dispatch, refetch, scrollToBottom])
 
   useEffect(() => {
     if (data) {
@@ -140,7 +161,7 @@ export default function ChatRoom() {
       const msgs = messages[conversationId] || []
       decryptMessagesInList(msgs)
     }
-  }, [messages[conversationId]?.length, e2eeReady, otherPublicKey])
+  }, [messages[conversationId]?.length, JSON.stringify(messages[conversationId]?.map((m) => m._id)), e2eeReady, otherPublicKey])
 
   const scrollToBottom = useCallback((smooth = false) => {
     messagesEndRef.current?.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto' })
