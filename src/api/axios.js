@@ -1,6 +1,4 @@
 import axios from 'axios'
-import { store } from '../store'
-import { logout, setCredentials } from '../store/slices/authSlice'
 
 const API_URL = import.meta.env.VITE_API_URL || ''
 
@@ -10,11 +8,25 @@ const api = axios.create({
   withCredentials: true,
 })
 
-api.interceptors.request.use((config) => {
-  const { token } = store.getState().auth
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
+let _store
+let _logout
+let _setCredentials
+const loadStore = async () => {
+  if (!_store) {
+    const [{ store }, mod] = await Promise.all([
+      import('../store'),
+      import('../store/slices/authSlice'),
+    ])
+    _store = store
+    _logout = mod.logout
+    _setCredentials = mod.setCredentials
   }
+}
+
+api.interceptors.request.use(async (config) => {
+  await loadStore()
+  const { token } = _store.getState().auth
+  if (token) config.headers.Authorization = `Bearer ${token}`
   return config
 })
 
@@ -30,30 +42,31 @@ const processQueue = (error, token = null) => {
 }
 
 api.interceptors.response.use(
-  (res) => res,
+  (r) => r,
   async (error) => {
-    const originalRequest = error.config
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    const original = error.config
+    if (error.response?.status === 401 && !original._retry) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject })
-        }).then((token) => {
-          originalRequest.headers.Authorization = `Bearer ${token}`
-          return api(originalRequest)
+        }).then((t) => {
+          original.headers.Authorization = `Bearer ${t}`
+          return api(original)
         })
       }
-      originalRequest._retry = true
+      original._retry = true
       isRefreshing = true
       try {
+        await loadStore()
         const { data } = await axios.post(`${API_URL}/api/auth/refresh`, {}, { withCredentials: true })
-        const currentUser = store.getState().auth.user
-        store.dispatch(setCredentials({ token: data.accessToken, user: currentUser }))
+        const currentUser = _store.getState().auth.user
+        _store.dispatch(_setCredentials({ token: data.accessToken, user: currentUser }))
         processQueue(null, data.accessToken)
-        originalRequest.headers.Authorization = `Bearer ${data.accessToken}`
-        return api(originalRequest)
+        original.headers.Authorization = `Bearer ${data.accessToken}`
+        return api(original)
       } catch {
+        try { await loadStore(); _store.dispatch(_logout()) } catch {}
         processQueue(error, null)
-        store.dispatch(logout())
         localStorage.removeItem('auth')
         return Promise.reject(error)
       } finally {
