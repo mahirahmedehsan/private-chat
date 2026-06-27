@@ -73,6 +73,16 @@ export default function ChatRoom() {
     refetchInterval: false,
   })
 
+  const scrollToBottom = useCallback((smooth = false) => {
+    messagesEndRef.current?.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto' })
+  }, [])
+
+  const isNearBottom = useCallback(() => {
+    const el = scrollContainerRef.current
+    if (!el) return true
+    return el.scrollHeight - el.scrollTop - el.clientHeight < 150
+  }, [])
+
   useEffect(() => {
     if (conversationId && user && e2eeReady) {
       const socket = getSocket()
@@ -162,16 +172,6 @@ export default function ChatRoom() {
       decryptMessagesInList(msgs)
     }
   }, [messages[conversationId]?.length, JSON.stringify(messages[conversationId]?.map((m) => m._id)), e2eeReady, otherPublicKey])
-
-  const scrollToBottom = useCallback((smooth = false) => {
-    messagesEndRef.current?.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto' })
-  }, [])
-
-  const isNearBottom = useCallback(() => {
-    const el = scrollContainerRef.current
-    if (!el) return true
-    return el.scrollHeight - el.scrollTop - el.clientHeight < 150
-  }, [])
 
   useEffect(() => {
     if (!isFetchingNextPage && isNearBottom()) {
