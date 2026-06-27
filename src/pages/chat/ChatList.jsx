@@ -52,6 +52,7 @@ export default function ChatList() {
   useEffect(() => {
     if (friendsData?.friends) {
       const friendIds = new Set(friendsData.friends.map((f) => f.uid))
+      const currentConvIds = new Set(conversations.map((c) => c.id))
       const convs = friendsData.friends.map((f) => {
         const id = [user?.uid, f.uid].sort().join(':')
         const existing = conversations.find((c) => c.id === id)
@@ -64,6 +65,8 @@ export default function ChatList() {
           lastActivity: null,
         }
       })
+      const newIds = new Set(convs.map((c) => c.id))
+      if (newIds.size === currentConvIds.size && convs.every((c) => currentConvIds.has(c.id))) return
       const preserved = conversations.filter((c) => {
         const otherUid = c.id.replace(`${user?.uid}:`, '').replace(`:${user?.uid}`, '')
         return otherUid && !friendIds.has(otherUid)

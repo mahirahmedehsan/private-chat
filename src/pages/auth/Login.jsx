@@ -57,6 +57,10 @@ export default function Login() {
         setupDrive().catch(() => {})
       }
     } catch (err) {
+      if (err.code === 'auth/popup-closed-by-user') {
+        dispatch(setError(null))
+        return
+      }
       dispatch(setError(err.response?.data?.error?.message || err.message || 'Google login failed'))
     }
   }

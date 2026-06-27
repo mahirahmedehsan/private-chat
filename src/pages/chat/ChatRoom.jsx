@@ -3,14 +3,13 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
 import { motion, AnimatePresence } from 'framer-motion'
-import { FiArrowLeft, FiPhone, FiVideo, FiInfo, FiMoreHorizontal, FiX, FiMail, FiCalendar, FiMessageSquare, FiImage, FiFile, FiSend, FiBell, FiUserX, FiUserCheck, FiSlash, FiBellOff, FiClock, FiLock, FiUnlock, FiPlus } from 'react-icons/fi'
+import { FiArrowLeft, FiPhone, FiVideo, FiInfo, FiMoreHorizontal, FiX, FiMail, FiCalendar, FiMessageSquare, FiImage, FiFile, FiSend, FiBell, FiUserX, FiUserCheck, FiSlash, FiBellOff, FiClock, FiLock, FiPlus } from 'react-icons/fi'
 import { getMessages, sendMessage as apiSendMessage, editMessage as apiEditMessage, deleteMessage as apiDeleteMessage, toggleReaction } from '../../api/messages'
 import { getUser } from '../../api/users'
 import { removeFriend, blockUser, unblockUser, getFriendStatus } from '../../api/friends'
 import { setActiveSection } from '../../store/slices/uiSlice'
 import { setMessages, addMessage, removeMessage, updateMessage, setTyping, updateConversationLastMessage, muteConversation, unmuteConversation } from '../../store/slices/chatSlice'
 import { getSocket } from '../../config/socket'
-import { backupToDrive } from '../../utils/backupToDrive'
 import { encryptMessage, decryptMessage, getKeyPair } from '../../utils/encryption'
 import { setE2EEEnabled } from '../../store/slices/authSlice'
 import ChatBubble from '../../components/chat/ChatBubble'
@@ -34,6 +33,7 @@ export default function ChatRoom() {
   const [showMenu, setShowMenu] = useState(false)
   const [otherPublicKey, setOtherPublicKey] = useState(null)
   const [decryptedMessages, setDecryptedMessages] = useState({})
+  const decryptedRef = useRef({})
 
   const conversation = conversations.find((c) => c.id === conversationId)
   const otherUser = conversation?.user
@@ -61,6 +61,7 @@ export default function ChatRoom() {
     hasNextPage,
     isFetchingNextPage,
     isLoading,
+    refetch,
   } = useInfiniteQuery({
     queryKey: ['messages', conversationId],
     queryFn: ({ pageParam = 1 }) => getMessages(conversationId, { page: pageParam, limit: 50 }),
@@ -69,6 +70,7 @@ export default function ChatRoom() {
     },
     enabled: !!conversationId,
     refetchOnMount: true,
+    refetchInterval: false,
   })
 
   useEffect(() => {
@@ -96,15 +98,18 @@ export default function ChatRoom() {
   }, [otherUser?.uid, dispatch])
 
   useEffect(() => {
-    if (data && e2eeReady && otherPublicKey) {
-      const allMessages = data.pages.flatMap((p) => p.messages || []).reverse()
-      dispatch(setMessages({ conversationId, messages: allMessages }))
-      decryptMessagesInList(allMessages)
-    } else if (data) {
+    if (data) {
       const allMessages = data.pages.flatMap((p) => p.messages || []).reverse()
       dispatch(setMessages({ conversationId, messages: allMessages }))
     }
-  }, [data, e2eeReady, otherPublicKey])
+  }, [data])
+
+  useEffect(() => {
+    const socket = getSocket()
+    if (socket?.connected) return
+    const interval = setInterval(() => { refetch() }, 5000)
+    return () => clearInterval(interval)
+  }, [conversationId])
 
   const decryptMessagesInList = async (msgs) => {
     if (!e2eeReady || !otherPublicKey) return
@@ -113,7 +118,7 @@ export default function ChatRoom() {
 
     const decrypted = {}
     for (const msg of msgs) {
-      if (msg.encryptedContent && !msg._decrypted) {
+      if (msg.encryptedContent && !decryptedRef.current[msg._id]) {
         const plaintext = decryptMessage(
           msg.encryptedContent,
           otherPublicKey,
@@ -121,6 +126,7 @@ export default function ChatRoom() {
         )
         if (plaintext) {
           decrypted[msg._id] = plaintext
+          decryptedRef.current[msg._id] = plaintext
         }
       }
     }
@@ -130,29 +136,25 @@ export default function ChatRoom() {
   }
 
   useEffect(() => {
-    if (!data || !e2eeReady) return
-    const allMessages = data.pages.flatMap((p) => p.messages || []).reverse()
-    decryptMessagesInList(allMessages)
-  }, [data, e2eeReady, otherPublicKey])
-
-  useEffect(() => {
-    if (!e2eeReady || !otherPublicKey) return
-    const msgs = messages[conversationId] || []
-    const undecrypted = msgs.filter(
-      (m) => m.encryptedContent && !decryptedMessages[m._id]
-    )
-    if (undecrypted.length > 0) {
-      decryptMessagesInList(undecrypted)
+    if (e2eeReady && otherPublicKey) {
+      const msgs = messages[conversationId] || []
+      decryptMessagesInList(msgs)
     }
-  }, [messages[conversationId], e2eeReady, otherPublicKey, decryptedMessages])
+  }, [messages[conversationId]?.length, e2eeReady, otherPublicKey])
 
   const scrollToBottom = useCallback((smooth = false) => {
     messagesEndRef.current?.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto' })
   }, [])
 
+  const isNearBottom = useCallback(() => {
+    const el = scrollContainerRef.current
+    if (!el) return true
+    return el.scrollHeight - el.scrollTop - el.clientHeight < 150
+  }, [])
+
   useEffect(() => {
-    if (!isFetchingNextPage) {
-      setTimeout(scrollToBottom, 100)
+    if (!isFetchingNextPage && isNearBottom()) {
+      scrollToBottom()
     }
   }, [messages[conversationId]?.length, isFetchingNextPage])
 
@@ -195,34 +197,33 @@ export default function ChatRoom() {
     }))
     scrollToBottom()
 
-    const socket = getSocket()
-    if (socket?.connected) {
-      socket.emit('chat:send', {
-        to: otherUser?.uid,
+    try {
+      const res = await apiSendMessage({
+        recipientId: otherUser?.uid,
         text: encryptedContent ? '' : (text || ''),
         encryptedContent,
-        conversationId,
-        messageId: tempId,
-        timestamp: msg.createdAt,
         ...(file ? { file } : {}),
       })
-    } else {
-      try {
-        const res = await apiSendMessage({
-          recipientId: otherUser?.uid,
+      dispatch(updateMessage({
+        conversationId,
+        messageId: tempId,
+        updates: { _id: res._id || tempId },
+      }))
+      const socket = getSocket()
+      if (socket?.connected) {
+        socket.emit('chat:send', {
+          to: otherUser?.uid,
           text: encryptedContent ? '' : (text || ''),
           encryptedContent,
+          conversationId,
+          messageId: res._id,
+          timestamp: msg.createdAt,
           ...(file ? { file } : {}),
         })
-        dispatch(updateMessage({
-          conversationId,
-          messageId: tempId,
-          updates: { _id: res._id || tempId },
-        }))
-      } catch {}
+      }
+    } catch (err) {
+      dispatch(removeMessage({ conversationId, messageId: tempId }))
     }
-
-    backupToDrive('message', { text: displayText || '', conversationId, senderId: user?.uid, recipientId: otherUser?.uid, createdAt: msg.createdAt, ...(file ? { file } : {}) })
   }
 
   const handleTyping = (isTyping) => {
