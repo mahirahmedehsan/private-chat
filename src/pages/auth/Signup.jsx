@@ -12,6 +12,7 @@ import {
   GoogleAuthProvider,
 } from '../../config/firebase'
 import { loginWithGoogle, registerUser } from '../../api/auth'
+import { setupDrive } from '../../api/drive'
 import { setCredentials, setLoading, setError } from '../../store/slices/authSlice'
 import Button from '../../components/ui/Button'
 import Input from '../../components/ui/Input'
@@ -60,6 +61,9 @@ export default function Signup() {
 
       dispatch(setCredentials({ token, user, googleAccessToken: returnedToken || googleAccessToken }))
       navigate('/chat')
+      if (returnedToken || googleAccessToken) {
+        setupDrive().catch(() => {})
+      }
     } catch (err) {
       dispatch(setError(err.response?.data?.error?.message || err.message || 'Google signup failed'))
     }

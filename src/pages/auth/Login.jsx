@@ -53,6 +53,9 @@ export default function Login() {
 
       dispatch(setCredentials({ token, user, googleAccessToken: returnedToken || googleAccessToken }))
       navigate('/chat')
+      if (returnedToken || googleAccessToken) {
+        setupDrive().catch(() => {})
+      }
     } catch (err) {
       if (err.code === 'auth/popup-closed-by-user') {
         dispatch(setError(null))

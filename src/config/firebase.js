@@ -23,6 +23,8 @@ const auth = getAuth(app)
 const rtdb = getDatabase(app)
 
 const googleProvider = new GoogleAuthProvider()
+googleProvider.addScope('https://www.googleapis.com/auth/drive.file')
+googleProvider.setCustomParameters({ access_type: 'offline' })
 
 const driveProvider = new GoogleAuthProvider()
 driveProvider.addScope('https://www.googleapis.com/auth/drive.file')
