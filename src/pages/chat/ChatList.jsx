@@ -5,7 +5,6 @@ import { useQuery } from '@tanstack/react-query'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FiPlus, FiSearch, FiUsers, FiSlash } from 'react-icons/fi'
 import { getFriends, unblockUser, getBlockedList } from '../../api/friends'
-import { heartbeat } from '../../api/presence'
 import { setConversations, setActiveConversation } from '../../store/slices/chatSlice'
 import ConversationItem from '../../components/chat/ConversationItem'
 import TopBar from '../../components/layout/TopBar'
@@ -78,8 +77,9 @@ export default function ChatList() {
   }, [friendsData])
 
   useEffect(() => {
-    heartbeat().catch(() => {})
-    const onFocus = () => heartbeat().catch(() => {})
+    const sendHeartbeat = () => import('../../api/presence').then(m => m.heartbeat()).catch(() => {})
+    sendHeartbeat()
+    const onFocus = () => sendHeartbeat()
     window.addEventListener('focus', onFocus)
     return () => window.removeEventListener('focus', onFocus)
   }, [])
