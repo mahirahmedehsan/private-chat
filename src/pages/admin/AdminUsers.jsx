@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { motion, AnimatePresence } from 'framer-motion'
-import { FiSearch, FiShield, FiUser, FiBan, FiCheck, FiX, FiChevronLeft, FiChevronRight, FiMail, FiCalendar } from 'react-icons/fi'
+import { FiSearch, FiShield, FiUser, FiXCircle, FiCheck, FiX, FiChevronLeft, FiChevronRight, FiMail, FiCalendar } from 'react-icons/fi'
 import { getAdminUsers, updateUserRole, toggleBanUser } from '../../api/admin'
 import TopBar from '../../components/layout/TopBar'
 import Avatar from '../../components/ui/Avatar'
@@ -100,7 +100,7 @@ export default function AdminUsers() {
                         )}
                         {user.banned && (
                           <span className="flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 rounded bg-danger/10 text-danger">
-                            <FiBan className="h-2.5 w-2.5" /> Banned
+                            <FiXCircle className="h-2.5 w-2.5" /> Banned
                           </span>
                         )}
                       </div>
@@ -118,7 +118,7 @@ export default function AdminUsers() {
                         <Button
                           size="xs"
                           variant={user.banned ? 'ghost' : 'danger'}
-                          icon={user.banned ? FiCheck : FiBan}
+                          icon={user.banned ? FiCheck : FiXCircle}
                           onClick={() => banMutation.mutate(user.uid)}
                           loading={banMutation.isPending}
                         >

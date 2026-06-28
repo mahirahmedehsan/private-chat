@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
-import { FiUsers, FiFileText, FiMessageSquare, FiAlertTriangle, FiBan, FiGlobe, FiShield } from 'react-icons/fi'
+import { FiUsers, FiFileText, FiMessageSquare, FiAlertTriangle, FiXCircle, FiGlobe, FiShield } from 'react-icons/fi'
 import { getAdminStats } from '../../api/admin'
 import TopBar from '../../components/layout/TopBar'
 
@@ -19,7 +19,7 @@ export default function AdminDashboard() {
     { icon: FiFileText, label: 'Total Posts', value: stats?.totalNotes, color: 'from-accent/15 to-accent/5 text-accent-light' },
     { icon: FiMessageSquare, label: 'Total Messages', value: stats?.totalMessages, color: 'from-accent/15 to-accent/5 text-accent-light' },
     { icon: FiAlertTriangle, label: 'Pending Reports', value: stats?.pendingReports, color: 'from-warning/15 to-warning/5 text-warning' },
-    { icon: FiBan, label: 'Banned Users', value: stats?.bannedUsers, color: 'from-danger/15 to-danger/5 text-danger' },
+    { icon: FiXCircle, label: 'Banned Users', value: stats?.bannedUsers, color: 'from-danger/15 to-danger/5 text-danger' },
   ]
 
   return (
