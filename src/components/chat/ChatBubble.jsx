@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FiSmile, FiEdit2, FiTrash2, FiCheck, FiX, FiCheckCircle, FiFile, FiLock, FiUnlock } from 'react-icons/fi'
+import { linkify } from '../../utils/linkify'
 
 const emojis = ['👍', '❤️', '😂', '😮', '😢', '🙏']
 
@@ -76,7 +77,7 @@ export default function ChatBubble({ message, isOwn, onReact, onEdit, onDelete, 
             {isEncrypted && !message.text ? (
               <p className="italic opacity-60 flex items-center gap-1.5"><FiLock className="h-3.5 w-3.5" /> Encrypted message</p>
             ) : message.text ? (
-              <p className="whitespace-pre-wrap">{message.text}</p>
+              <p className="whitespace-pre-wrap">{linkify(message.text)}</p>
             ) : null}
             {message.isEdited && <span className="text-[10px] opacity-50 ml-1 italic">(edited)</span>}
             <div className={`flex items-center gap-1.5 mt-1 ${isOwn ? 'justify-end' : 'justify-start'}`}>

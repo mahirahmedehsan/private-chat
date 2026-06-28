@@ -19,6 +19,7 @@ import { NoteSkeleton } from '../../components/ui/Skeleton'
 import Modal from '../../components/ui/Modal'
 import { addToast } from '../../store/slices/uiSlice'
 import { useDispatch } from 'react-redux'
+import { linkify } from '../../utils/linkify'
 
 const noteEmojis = ['👍', '❤️', '😂', '😮', '😢', '🙏']
 
@@ -203,7 +204,7 @@ function PostCard({ note, currentUserId, onReact, onComment, onDelete, onDeleteC
 
         <div className="px-4 pt-3 pb-2">
           {note.content && (
-            <p className="text-sm text-text-primary whitespace-pre-wrap leading-relaxed">{note.content}</p>
+            <p className="text-sm text-text-primary whitespace-pre-wrap leading-relaxed">{linkify(note.content)}</p>
           )}
         </div>
 
@@ -320,7 +321,7 @@ function PostCard({ note, currentUserId, onReact, onComment, onDelete, onDeleteC
                                 <span className="text-[10px] text-text-muted bg-dark-350 px-1 rounded">You</span>
                               )}
                             </div>
-                            <p className="text-xs text-text-secondary mt-1 leading-relaxed">{comment.content}</p>
+                            <p className="text-xs text-text-secondary mt-1 leading-relaxed">{linkify(comment.content)}</p>
 
                             {(comment.reactions || []).length > 0 && (
                               <div className="flex flex-wrap gap-1 mt-1.5">
