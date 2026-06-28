@@ -242,6 +242,7 @@ select:focus:not(:focus-visible), button:focus:not(:focus-visible) {
   .show-mobile { display: flex !important; }
   .hide-desktop { display: flex !important; }
   .show-desktop { display: none !important; }
+  .has-mobile-nav { padding-bottom: 56px; padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px)); }
 }
 @media (min-width: 769px) {
   .hide-mobile { display: flex !important; }
