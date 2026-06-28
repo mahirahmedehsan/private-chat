@@ -16,7 +16,6 @@ export default function ConversationItem({ conversation, isActive, onClick }) {
     const mins = Math.floor(diff / 60000)
     const hours = Math.floor(diff / 3600000)
     const days = Math.floor(diff / 86400000)
-
     if (mins < 1) return 'now'
     if (mins < 60) return `${mins}m`
     if (hours < 24) return `${hours}h`
@@ -24,28 +23,24 @@ export default function ConversationItem({ conversation, isActive, onClick }) {
     return d.toLocaleDateString([], { month: 'short', day: 'numeric' })
   }
 
-  const truncate = (str, len = 60) =>
+  const previewText = (str, len = 50) =>
     str && str.length > len ? str.slice(0, len) + '...' : str
 
-  const previewText = lastMessage?.text
-    ? truncate(lastMessage.text)
-    : (lastMessage?.file
-        ? (lastMessage.file.type?.startsWith('image/') ? '📷 Image' : '📎 PDF')
-        : 'No messages yet')
+  const preview = lastMessage?.text
+    ? previewText(lastMessage.text)
+    : lastMessage?.file
+      ? (lastMessage.file.type?.startsWith('image/') ? '📷 Image' : '📎 File')
+      : 'No messages yet'
 
   return (
     <motion.button
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
-      className={`
-        w-full flex items-center gap-3 px-4 py-3.5 transition-all duration-200 text-left
-        ${isActive
-          ? 'bg-dark-300/70 border-l-[3px] border-accent'
-          : 'bg-transparent border-l-[3px] border-transparent hover:bg-dark-250/40'
-        }
+      className={`w-full flex items-center gap-3 px-4 py-3 transition-all duration-150 text-left
+        ${isActive ? 'bg-dark-200' : 'hover:bg-dark-150'}
       `}
     >
-      <div className="shrink-0">
+      <div className="shrink-0 relative">
         <Avatar src={user?.photoURL} name={user?.displayName} size="md" status={liveStatus} />
       </div>
       <div className="flex-1 min-w-0">
@@ -53,30 +48,17 @@ export default function ConversationItem({ conversation, isActive, onClick }) {
           <span className={`font-semibold text-sm truncate ${isActive ? 'text-accent-light' : 'text-text-primary'}`}>
             {user?.displayName || 'Unknown'}
           </span>
-          <span className="text-[11px] text-text-muted shrink-0">
-            {timeAgo(lastActivity || lastMessage?.createdAt)}
-          </span>
+          <span className="text-[11px] text-text-muted shrink-0">{timeAgo(lastMessage?.createdAt || lastActivity)}</span>
         </div>
         <div className="flex items-center justify-between gap-2 mt-0.5">
-          <div className="flex items-center gap-2 min-w-0">
-            {lastMessage?.senderId === user?.uid && (
-              <span className="text-[9px] text-text-muted shrink-0 font-medium">You: </span>
-            )}
-            <span
-              className={`text-sm truncate ${!lastMessage ? 'text-text-muted italic' : unreadCount > 0 ? 'text-text-primary font-medium' : 'text-text-secondary'}`}
-            >
-              {previewText}
-            </span>
-          </div>
+          <span className={`text-sm truncate ${!lastMessage ? 'text-text-muted italic' : unreadCount > 0 ? 'text-text-primary font-medium' : 'text-text-secondary'}`}>
+            {lastMessage?.senderId === user?.uid && <span className="text-text-muted">You: </span>}
+            {preview}
+          </span>
           {unreadCount > 0 && (
-            <motion.span
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: 'spring', damping: 15, stiffness: 300 }}
-              className="shrink-0 min-w-[22px] h-[22px] rounded-full bg-gradient-to-r from-accent to-accent-hover text-white text-[11px] font-bold flex items-center justify-center px-1.5 shadow-lg shadow-accent/30"
-            >
+            <span className="shrink-0 min-w-[20px] h-[20px] rounded-full bg-accent text-white text-[10px] font-bold flex items-center justify-center px-1.5 shadow-lg shadow-accent/20">
               {unreadCount > 99 ? '99+' : unreadCount}
-            </motion.span>
+            </span>
           )}
         </div>
       </div>

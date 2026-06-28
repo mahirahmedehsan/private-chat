@@ -10,12 +10,10 @@ export default function TopBar({ title, onSearch, searchValue, children }) {
   const { notificationUnreadCount } = useSelector((s) => s.chat)
 
   return (
-    <header className="h-14 min-h-[56px] bg-dark-100/70 backdrop-blur-xl border-b border-border flex items-center justify-between px-4 md:px-6 gap-4">
-      <div className="flex items-center gap-3">
-        <h1 className="text-[17px] font-semibold text-text-primary tracking-tight">
-          {title || t(`topbar.${activeSection}`) || activeSection}
-        </h1>
-      </div>
+    <header className="h-14 min-h-[56px] bg-dark-100/80 backdrop-blur-xl border-b border-border flex items-center justify-between px-4 md:px-6 gap-4">
+      <h1 className="text-[17px] font-bold text-text-primary tracking-tight">
+        {title || t(`topbar.${activeSection}`) || activeSection}
+      </h1>
       <div className="flex items-center gap-2">
         {onSearch && (
           <div className="relative">
@@ -25,19 +23,17 @@ export default function TopBar({ title, onSearch, searchValue, children }) {
               placeholder={t('topbar.search')}
               value={searchValue}
               onChange={(e) => onSearch(e.target.value)}
-              aria-label="Search"
-              className="w-40 md:w-56 bg-dark-350/70 border border-border-light rounded-xl pl-9 pr-3 py-2 text-sm text-text-primary placeholder-text-muted/60 focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent/40 transition-all"
+              className="w-40 md:w-56 bg-dark-300 border border-border rounded-lg pl-9 pr-3 py-1.5 text-sm text-text-primary placeholder-text-muted/60 focus:outline-none focus:ring-1 focus:ring-accent/50 focus:border-accent/50 transition-all"
             />
           </div>
         )}
         <button
           onClick={() => navigate('/notifications')}
-          className="relative w-9 h-9 rounded-xl flex items-center justify-center text-text-muted hover:text-text-primary hover:bg-dark-300/60 transition-all"
-          aria-label={`Notifications${notificationUnreadCount > 0 ? ` (${notificationUnreadCount} unread)` : ''}`}
+          className="relative w-8 h-8 rounded-lg flex items-center justify-center text-text-muted hover:text-text-primary hover:bg-dark-200 transition-all"
         >
           <FiBell className={`h-[18px] w-[18px] ${notificationUnreadCount > 0 ? 'animate-scale-bounce' : ''}`} />
           {notificationUnreadCount > 0 && (
-            <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 flex items-center justify-center rounded-full bg-gradient-to-r from-danger to-red-500 text-[9px] font-bold text-white leading-none shadow-lg shadow-danger/30">
+            <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-[16px] px-1 flex items-center justify-center rounded-full bg-danger text-[8px] font-bold text-white shadow-lg">
               {notificationUnreadCount > 99 ? '99+' : notificationUnreadCount}
             </span>
           )}

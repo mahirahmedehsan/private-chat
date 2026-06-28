@@ -44,25 +44,24 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md' })
             onClick={onClose}
           />
           <motion.div
-            initial={{ opacity: 0, scale: 0.94, y: 12 }}
+            initial={{ opacity: 0, scale: 0.95, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.94, y: 12 }}
+            exit={{ opacity: 0, scale: 0.95, y: 10 }}
             transition={{ type: 'spring', damping: 26, stiffness: 300, mass: 0.8 }}
-            className={`relative w-full ${sizeMap[size]} bg-dark-200 rounded-2xl border border-border-light shadow-2xl overflow-hidden`}
+            className={`relative w-full ${sizeMap[size]} bg-dark-100 rounded-xl border border-dark-400 shadow-2xl overflow-hidden`}
           >
             {title && (
-              <div className="flex items-center justify-between px-6 py-4 border-b border-border">
-                <h2 className="text-base font-semibold text-text-primary">{title}</h2>
+              <div className="flex items-center justify-between px-5 py-3.5 border-b border-border">
+                <h2 className="text-base font-bold text-text-primary">{title}</h2>
                 <button
                   onClick={onClose}
-                  className="p-1.5 rounded-lg text-text-muted hover:text-text-primary hover:bg-dark-350 transition-colors"
-                  aria-label="Close modal"
+                  className="p-1.5 rounded-lg text-text-muted hover:text-text-primary hover:bg-dark-300 transition-colors"
                 >
                   <FiX className="h-4 w-4" />
                 </button>
               </div>
             )}
-            <div className="px-6 py-5">{children}</div>
+            <div className="px-5 py-4">{children}</div>
           </motion.div>
         </div>
       )}

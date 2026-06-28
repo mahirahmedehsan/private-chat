@@ -43,82 +43,61 @@ export default function Sidebar() {
   }
 
   return (
-    <motion.aside
-      initial={{ x: -72 }}
-      animate={{ x: 0 }}
-      className="w-[72px] min-w-[72px] bg-dark-100/80 backdrop-blur-sm flex flex-col items-center py-3 gap-2 border-r border-border hide-mobile"
-    >
-      <div className="mb-2">
-        <div
+    <aside className="w-60 min-w-[240px] bg-dark-50 flex flex-col border-r border-border hide-mobile">
+      {/* Logo / Home */}
+      <div className="h-14 flex items-center px-4 border-b border-border">
+        <button
           onClick={() => navigate('/feed')}
-          className="w-11 h-11 rounded-2xl bg-gradient-to-br from-accent via-accent-hover to-blue-500 flex items-center justify-center cursor-pointer hover:rounded-xl hover:scale-105 hover:shadow-xl hover:shadow-accent/30 transition-all duration-200 shadow-lg shadow-accent/20"
-          aria-label="Home"
+          className="flex items-center gap-2.5 text-text-primary hover:text-accent-light transition-colors"
         >
-          <FiMessageSquare className="h-5 w-5 text-white" />
-        </div>
+          <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center shadow-lg shadow-accent/20">
+            <FiMessageSquare className="h-4 w-4 text-white" />
+          </div>
+          <span className="font-bold text-base tracking-tight">PrivateChat</span>
+        </button>
       </div>
 
-      <div className="w-7 h-px bg-gradient-to-r from-transparent via-border to-transparent my-1" />
-
-      <nav className="flex flex-col items-center gap-1 flex-1" aria-label="Main navigation">
+      {/* Navigation */}
+      <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-0.5">
         {navItems.filter((item) => item.id !== 'admin' || isAdmin).map((item) => {
           const isActive = activeId === item.id || (item.id === 'admin' && location.pathname.startsWith('/admin'))
+          const Icon = item.icon
           return (
-            <motion.button
+            <button
               key={item.id}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
               onClick={() => handleNav(item)}
-              aria-label={item.label}
-              aria-current={isActive ? 'page' : undefined}
               className={`
-                relative w-11 h-11 rounded-2xl flex items-center justify-center
-                transition-all duration-200 group
+                w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all
                 ${isActive
-                  ? 'text-white'
-                  : 'text-text-muted hover:text-text-primary hover:bg-dark-300/60 hover:rounded-xl'
+                  ? 'bg-accent-bg text-accent-light'
+                  : 'text-text-secondary hover:bg-dark-200 hover:text-text-primary'
                 }
               `}
             >
-              {isActive && (
-                <motion.div
-                  layoutId="sidebar-active"
-                  className="absolute inset-0 rounded-xl bg-gradient-to-br from-accent to-accent-hover shadow-lg shadow-accent/25"
-                  transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                />
-              )}
-              <motion.div className="relative z-10">
-                <item.icon className="h-5 w-5" />
-              </motion.div>
-              <div
-                className="absolute left-full ml-3 px-2.5 py-1.5 bg-dark-200/95 backdrop-blur-xl border border-border-light rounded-xl text-xs font-medium text-text-primary whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 shadow-2xl z-50"
-                role="tooltip"
-              >
-                {item.label}
-              </div>
-            </motion.button>
+              <Icon className="h-5 w-5 shrink-0" />
+              <span>{item.label}</span>
+            </button>
           )
         })}
       </nav>
 
-      <div className="w-7 h-px bg-gradient-to-r from-transparent via-border to-transparent my-1" />
-
-      <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={handleLogout}
-        className="w-11 h-11 rounded-2xl flex items-center justify-center text-text-muted hover:text-danger hover:bg-danger-bg transition-all duration-200"
-        aria-label="Logout"
-      >
-        <FiLogOut className="h-4 w-4" />
-      </motion.button>
-
-      <div
-        onClick={() => navigate('/profile')}
-        className="relative group cursor-pointer"
-      >
-        <Avatar src={user?.photoURL} name={user?.displayName} size="sm" status="online" />
+      {/* Bottom section */}
+      <div className="border-t border-border p-2 space-y-1">
+        <button
+          onClick={() => navigate('/profile')}
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-text-secondary hover:bg-dark-200 hover:text-text-primary transition-all"
+        >
+          <Avatar src={user?.photoURL} name={user?.displayName} size="xs" status="online" />
+          <span className="truncate">{user?.displayName || 'User'}</span>
+        </button>
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-text-muted hover:bg-danger-bg hover:text-danger transition-all"
+        >
+          <FiLogOut className="h-4 w-4 shrink-0" />
+          <span>Sign Out</span>
+        </button>
       </div>
-    </motion.aside>
+    </aside>
   )
 }

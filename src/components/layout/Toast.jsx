@@ -12,10 +12,10 @@ const icons = {
 }
 
 const config = {
-  success: { border: 'border-success/25', bg: 'bg-success/10', iconColor: 'text-success', glow: 'shadow-success/10', bar: 'bg-success' },
-  error: { border: 'border-danger/25', bg: 'bg-danger/10', iconColor: 'text-danger', glow: 'shadow-danger/10', bar: 'bg-danger' },
-  warning: { border: 'border-warning/25', bg: 'bg-warning/10', iconColor: 'text-warning', glow: 'shadow-warning/10', bar: 'bg-warning' },
-  info: { border: 'border-accent/25', bg: 'bg-accent/10', iconColor: 'text-accent-light', glow: 'shadow-accent/10', bar: 'bg-accent' },
+  success: { border: 'border-success/25', bg: 'bg-success/10', iconColor: 'text-success', bar: 'bg-success' },
+  error: { border: 'border-danger/25', bg: 'bg-danger/10', iconColor: 'text-danger', bar: 'bg-danger' },
+  warning: { border: 'border-warning/25', bg: 'bg-warning/10', iconColor: 'text-warning', bar: 'bg-warning' },
+  info: { border: 'border-accent/25', bg: 'bg-accent/10', iconColor: 'text-accent-light', bar: 'bg-accent' },
 }
 
 export default function Toast() {
@@ -23,7 +23,7 @@ export default function Toast() {
   const dispatch = useDispatch()
 
   return (
-    <div className="fixed top-4 right-4 z-[100] flex flex-col gap-2.5 max-w-sm w-full pointer-events-none">
+    <div className="fixed top-4 right-4 z-[100] flex flex-col gap-2 max-w-sm w-full pointer-events-none">
       <AnimatePresence>
         {toasts.map((toast) => {
           const Icon = icons[toast.type] || FiInfo
@@ -65,12 +65,9 @@ function ToastItem({ toast, Icon, onDismiss }) {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       role="alert"
-      className={`
-        pointer-events-auto relative overflow-hidden flex items-start gap-3 p-4 rounded-2xl border
-        bg-dark-200/95 backdrop-blur-xl shadow-xl ${c.glow} ${c.border} card-shadow
-      `}
+      className={`pointer-events-auto relative overflow-hidden flex items-start gap-3 p-3.5 rounded-xl border bg-dark-200 border-dark-400 shadow-xl`}
     >
-      <div className={`w-8 h-8 rounded-xl ${c.bg} flex items-center justify-center shrink-0`}>
+      <div className={`w-8 h-8 rounded-lg ${c.bg} flex items-center justify-center shrink-0`}>
         <Icon className={`h-4 w-4 ${c.iconColor}`} />
       </div>
       <div className="flex-1 min-w-0">
@@ -80,7 +77,6 @@ function ToastItem({ toast, Icon, onDismiss }) {
       <button
         onClick={onDismiss}
         className="shrink-0 p-1 rounded-lg text-text-muted hover:text-text-primary hover:bg-dark-350 transition-colors"
-        aria-label="Dismiss notification"
       >
         <FiX className="h-3.5 w-3.5" />
       </button>

@@ -728,7 +728,7 @@ export default function ChatRoom() {
               </motion.div>
             )}
 
-            {isTyping && <TypingIndicator name={otherUser?.displayName} />}
+            <TypingIndicator name={otherUser?.displayName} visible={!!isTyping} />
 
             <div ref={messagesEndRef} />
           </>

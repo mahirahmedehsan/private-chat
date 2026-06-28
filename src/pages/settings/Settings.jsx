@@ -118,7 +118,7 @@ function SectionGroup({ icon: Icon, title, delay = 0, children }) {
         </div>
         <h2 className="text-xs font-semibold text-text-muted uppercase tracking-widest">{title}</h2>
       </div>
-      <div className="glass-card rounded-xl overflow-hidden divide-y divide-border card-shadow">
+      <div className="glass-card rounded-xl overflow-hidden divide-y divide-border shadow-card">
         {children}
       </div>
     </motion.div>
