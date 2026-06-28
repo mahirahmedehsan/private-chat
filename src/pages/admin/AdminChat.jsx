@@ -134,7 +134,7 @@ export default function AdminChat() {
           <div className="flex-1 flex flex-col">
             {selectedUser ? (
               <>
-                <div className="px-4 py-3 border-b border-border bg-dark-100/50 backdrop-blur-sm flex items-center gap-3">
+                <div className="px-4 py-3 border-b border-border bg-dark-100 flex items-center gap-3">
                   <button onClick={() => setSelectedUser(null)} className="p-1.5 rounded-lg text-text-muted hover:text-text-primary hover:bg-dark-350/60 transition-all show-desktop">
                     <FiArrowLeft className="h-4 w-4" />
                   </button>
@@ -189,7 +189,7 @@ export default function AdminChat() {
                   <div ref={messagesEndRef} />
                 </div>
 
-                <form onSubmit={handleSend} className="p-3 border-t border-border bg-dark-100/50 backdrop-blur-sm">
+                <form onSubmit={handleSend} className="p-3 border-t border-border bg-dark-100">
                   <div className="flex items-center gap-2">
                     <input
                       type="text"
@@ -201,7 +201,7 @@ export default function AdminChat() {
                     <button
                       type="submit"
                       disabled={!text.trim() || sendMutation.isPending}
-                      className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-accent-light text-white flex items-center justify-center hover:shadow-lg hover:shadow-accent/30 transition-all disabled:opacity-50"
+                      className="w-10 h-10 rounded-xl bg-accent text-white flex items-center justify-center hover:bg-accent-hover transition-all disabled:opacity-50"
                     >
                       <FiSend className="h-4 w-4" />
                     </button>
@@ -211,7 +211,7 @@ export default function AdminChat() {
             ) : (
               <div className="flex-1 flex items-center justify-center">
                 <div className="text-center">
-                  <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-accent/5 to-transparent border border-border-light flex items-center justify-center mx-auto mb-5">
+                  <div className="w-20 h-20 rounded-3xl bg-dark-200 border border-dark-400 flex items-center justify-center mx-auto mb-5">
                     <FiMessageSquare className="h-9 w-9 text-accent-light" />
                   </div>
                   <h3 className="text-lg font-semibold text-text-primary">Chat as Admin</h3>

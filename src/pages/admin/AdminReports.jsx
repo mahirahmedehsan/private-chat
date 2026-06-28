@@ -62,7 +62,7 @@ export default function AdminReports() {
           {isLoading ? (
             <div className="space-y-3">
               {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="glass-card rounded-2xl p-4 animate-pulse">
+                <div key={i} className="bg-dark-100 rounded-xl p-4 animate-pulse">
                   <div className="h-20 bg-dark-300 rounded-xl" />
                 </div>
               ))}
@@ -78,13 +78,13 @@ export default function AdminReports() {
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.03 }}
-                    className={`glass-card rounded-2xl p-4 card-shadow border-l-[3px] ${
+                    className={`bg-dark-100 rounded-xl p-4 border-l-[3px] ${
                       report.status === 'pending' ? 'border-warning' :
                       report.status === 'resolved' ? 'border-success' : 'border-border'
                     }`}
                   >
                     <div className="flex items-start gap-3">
-                      <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-warning/15 to-warning/5 flex items-center justify-center shrink-0">
+                      <div className="w-9 h-9 rounded-xl bg-dark-200 flex items-center justify-center shrink-0">
                         <Icon className="h-4 w-4 text-warning" />
                       </div>
                       <div className="flex-1 min-w-0">

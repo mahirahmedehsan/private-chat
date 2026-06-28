@@ -96,7 +96,7 @@ export default function FriendProfile() {
       <div className="flex-1 overflow-y-auto scrollbar-gutter">
         <div className="max-w-2xl mx-auto">
           <div className="relative h-48 overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-accent/30 via-accent/15 via-blue-500/8 to-dark-150" />
+            <div className="absolute inset-0 bg-accent/10" />
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,oklch(0.623 0.214 259.8 / 0.12),transparent_70%)]" />
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,oklch(0.546 0.245 262.9 / 0.06),transparent_60%)]" />
             <div className="absolute top-1/4 -left-16 w-48 h-48 bg-accent/5 rounded-full blur-3xl" />
@@ -140,9 +140,9 @@ export default function FriendProfile() {
                 <motion.div
                   key={item.label}
                   whileHover={{ y: -2 }}
-                  className="glass-card rounded-xl p-4 text-center hover:border-accent/20 transition-all card-shadow"
+                  className="bg-dark-100 rounded-xl p-4 text-center hover:border-accent/20 transition-all"
                 >
-                  <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-accent/15 to-accent/5 flex items-center justify-center mx-auto mb-2">
+                  <div className="w-9 h-9 rounded-lg bg-dark-200 flex items-center justify-center mx-auto mb-2">
                     <item.icon className="h-4 w-4 text-accent-light" />
                   </div>
                   <p className="text-xl font-bold text-text-primary">{item.value ?? '-'}</p>
@@ -169,7 +169,7 @@ export default function FriendProfile() {
                     </span>
                   )}
                   {activeTab === tab.id && (
-                    <motion.div layoutId="friend-tab-indicator" className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-accent to-accent-light rounded-full" />
+                    <motion.div layoutId="friend-tab-indicator" className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent rounded-full" />
                   )}
                 </button>
               ))}
@@ -182,12 +182,12 @@ export default function FriendProfile() {
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
-                  className="glass-card rounded-2xl p-5 card-shadow space-y-4"
+                  className="bg-dark-100 rounded-xl p-5 space-y-4"
                 >
                   <div className="space-y-3">
                     {user.bio && (
                       <div className="flex items-center gap-3 px-4 py-3 bg-dark-200/60 rounded-xl border border-border-light">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent/15 to-accent/5 flex items-center justify-center shrink-0">
+                        <div className="w-8 h-8 rounded-lg bg-dark-200 flex items-center justify-center shrink-0">
                           <FiFileText className="h-4 w-4 text-accent-light" />
                         </div>
                         <div>
@@ -198,7 +198,7 @@ export default function FriendProfile() {
                     )}
                     {user.email && (
                       <div className="flex items-center gap-3 px-4 py-3 bg-dark-200/60 rounded-xl border border-border-light">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent/15 to-accent/5 flex items-center justify-center shrink-0">
+                        <div className="w-8 h-8 rounded-lg bg-dark-200 flex items-center justify-center shrink-0">
                           <FiMail className="h-4 w-4 text-accent-light" />
                         </div>
                         <div>
@@ -209,7 +209,7 @@ export default function FriendProfile() {
                     )}
                     {user.address && (
                       <div className="flex items-center gap-3 px-4 py-3 bg-dark-200/60 rounded-xl border border-border-light">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent/15 to-accent/5 flex items-center justify-center shrink-0">
+                        <div className="w-8 h-8 rounded-lg bg-dark-200 flex items-center justify-center shrink-0">
                           <FiMapPin className="h-4 w-4 text-accent-light" />
                         </div>
                         <div>
@@ -220,7 +220,7 @@ export default function FriendProfile() {
                     )}
                     {user.birthday && (
                       <div className="flex items-center gap-3 px-4 py-3 bg-dark-200/60 rounded-xl border border-border-light">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent/15 to-accent/5 flex items-center justify-center shrink-0">
+                        <div className="w-8 h-8 rounded-lg bg-dark-200 flex items-center justify-center shrink-0">
                           <FiCalendar className="h-4 w-4 text-accent-light" />
                         </div>
                         <div>
@@ -233,7 +233,7 @@ export default function FriendProfile() {
                     )}
                     {user.gender && (
                       <div className="flex items-center gap-3 px-4 py-3 bg-dark-200/60 rounded-xl border border-border-light">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent/15 to-accent/5 flex items-center justify-center shrink-0">
+                        <div className="w-8 h-8 rounded-lg bg-dark-200 flex items-center justify-center shrink-0">
                           <FiUsers className="h-4 w-4 text-accent-light" />
                         </div>
                         <div>
@@ -243,7 +243,7 @@ export default function FriendProfile() {
                       </div>
                     )}
                     <div className="flex items-center gap-3 px-4 py-3 bg-dark-200/60 rounded-xl border border-border-light">
-                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent/15 to-accent/5 flex items-center justify-center shrink-0">
+                      <div className="w-8 h-8 rounded-lg bg-dark-200 flex items-center justify-center shrink-0">
                         <FiCalendar className="h-4 w-4 text-accent-light" />
                       </div>
                       <div>
@@ -254,7 +254,7 @@ export default function FriendProfile() {
                       </div>
                     </div>
                     <div className="flex items-center gap-3 px-4 py-3 bg-dark-200/60 rounded-xl border border-border-light">
-                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent/15 to-accent/5 flex items-center justify-center shrink-0">
+                      <div className="w-8 h-8 rounded-lg bg-dark-200 flex items-center justify-center shrink-0">
                         <FiUsers className="h-4 w-4 text-accent-light" />
                       </div>
                       <div className="flex-1">
@@ -264,7 +264,7 @@ export default function FriendProfile() {
                     </div>
                     {user.lastSeen && (
                       <div className="flex items-center gap-3 px-4 py-3 bg-dark-200/60 rounded-xl border border-border-light">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent/15 to-accent/5 flex items-center justify-center shrink-0">
+                        <div className="w-8 h-8 rounded-lg bg-dark-200 flex items-center justify-center shrink-0">
                           <FiCalendar className="h-4 w-4 text-accent-light" />
                         </div>
                         <div>
@@ -285,7 +285,7 @@ export default function FriendProfile() {
                   {posts?.length > 0 ? (
                     <div className="space-y-3">
                       {posts.map((note) => (
-                        <div key={note._id} className="glass-card rounded-2xl p-4 hover:border-border transition-all card-shadow">
+                        <div key={note._id} className="bg-dark-100 border border-dark-400 rounded-xl p-4 hover:border-accent/30 transition-all">
                           <div className="flex items-start gap-3 mb-2">
                             <Avatar src={user.photoURL} name={user.displayName} size="sm" />
                             <div className="flex-1 min-w-0">

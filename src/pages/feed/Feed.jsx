@@ -42,7 +42,7 @@ function EmojiPicker({ emojis, myReactions, onSelect, align = 'left' }) {
       initial={{ opacity: 0, scale: 0.9, y: 8 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.9, y: 8 }}
-      className={`absolute bottom-full mb-2 z-20 bg-dark-150/95 backdrop-blur-xl border border-border-light rounded-2xl shadow-2xl p-1.5 flex gap-0.5 ${align === 'right' ? 'right-0' : 'left-0'}`}
+      className={`absolute bottom-full mb-2 z-20 bg-dark-200 border border-dark-450 rounded-xl shadow-xl p-1.5 flex gap-0.5 ${align === 'right' ? 'right-0' : 'left-0'}`}
     >
       {emojis.map((emoji) => (
         <button
@@ -132,7 +132,7 @@ function PostCard({ note, currentUserId, onReact, onComment, onDelete, onDeleteC
       exit={{ opacity: 0, y: -12 }}
       transition={{ type: 'spring', damping: 25, stiffness: 250 }}
     >
-      <div className="bg-dark-150/70 backdrop-blur-sm border border-border rounded-2xl overflow-hidden hover:border-border-light hover:shadow-lg hover:shadow-black/10 transition-all duration-200 shadow-card post-card">
+      <div className="bg-dark-100 border border-dark-400 rounded-xl overflow-hidden hover:border-dark-450 transition-all duration-200 post-card">
 
         <div className="flex items-start gap-3 px-4 pt-4">
           <button type="button" onClick={() => navigate(`/profile/${note.author?.uid}`)} className="shrink-0">
@@ -174,7 +174,7 @@ function PostCard({ note, currentUserId, onReact, onComment, onDelete, onDeleteC
                 <FiMoreHorizontal className="h-4 w-4" />
               </button>
               {showMenu && (
-                <div className="absolute right-0 top-full mt-1 w-36 bg-dark-150/95 backdrop-blur-xl border border-border-light rounded-xl shadow-2xl py-1 z-50">
+                <div className="absolute right-0 top-full mt-1 w-36 bg-dark-200 border border-dark-450 rounded-xl shadow-xl py-1 z-50">
                   <button
                     onClick={handleShare}
                     className="w-full flex items-center gap-2 px-3 py-2 text-sm text-text-primary hover:bg-dark-350/60 transition-colors"
@@ -307,7 +307,7 @@ function PostCard({ note, currentUserId, onReact, onComment, onDelete, onDeleteC
                           <Avatar src={comment.author?.photoURL} name={comment.author?.displayName} size="xs" />
                         </button>
                         <div className="flex-1 min-w-0">
-                          <div className="bg-dark-250/60 rounded-2xl px-3.5 py-2.5">
+                          <div className="bg-dark-200 rounded-xl px-3.5 py-2.5">
                             <div className="flex items-center gap-2">
                               <button
                                 type="button"
@@ -376,7 +376,7 @@ function PostCard({ note, currentUserId, onReact, onComment, onDelete, onDeleteC
               </div>
 
               <div className="px-4 pb-4 pt-1">
-                <div className="flex items-center gap-2 bg-dark-250/60 border border-border-light rounded-xl px-3 py-1.5 focus-within:ring-2 focus-within:ring-accent/25 focus-within:border-accent/40 transition-all">
+                <div className="flex items-center gap-2 bg-dark-200 border border-dark-400 rounded-xl px-3 py-1.5 focus-within:ring-2 focus-within:ring-accent/25 focus-within:border-accent/40 transition-all">
                   <input
                     value={commentText}
                     onChange={(e) => setCommentText(e.target.value)}
@@ -410,10 +410,9 @@ function PostCard({ note, currentUserId, onReact, onComment, onDelete, onDeleteC
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
             onClick={() => setImageViewer(null)}
           >
-            <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-black/40 to-transparent" />
             <button
               onClick={() => setImageViewer(null)}
               className="absolute top-4 right-4 w-10 h-10 rounded-xl flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 transition-all z-10"
@@ -430,7 +429,6 @@ function PostCard({ note, currentUserId, onReact, onComment, onDelete, onDeleteC
               className="max-w-full max-h-[85vh] rounded-2xl object-contain shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             />
-            <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-black/40 to-transparent pointer-events-none" />
           </motion.div>
         )}
       </AnimatePresence>
@@ -745,8 +743,8 @@ export default function Feed() {
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            className={`bg-dark-150/70 backdrop-blur-sm border rounded-2xl overflow-hidden shadow-card transition-all duration-200 ${
-              focused ? 'border-accent/40 ring-2 ring-accent/10 shadow-lg shadow-accent/5' : 'border-border'
+            className={`bg-dark-100 border rounded-xl overflow-hidden transition-all duration-200 ${
+              focused ? 'border-accent/40 ring-2 ring-accent/10' : 'border-dark-400'
             }`}
           >
             <div className="flex items-start gap-3 p-4 pb-0">
@@ -780,7 +778,7 @@ export default function Feed() {
                         <button
                           type="button"
                           onClick={() => removeImage(i)}
-                          className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-gradient-to-r from-danger to-red-500 rounded-full flex items-center justify-center text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                          className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-danger rounded-full flex items-center justify-center text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity"
                         >
                           <FiX className="h-3 w-3" />
                         </button>
@@ -791,7 +789,7 @@ export default function Feed() {
               )}
             </AnimatePresence>
 
-            <div className="flex items-center justify-between px-4 py-3 border-t border-border bg-gradient-to-r from-transparent via-dark-200/30 to-transparent">
+            <div className="flex items-center justify-between px-4 py-3 border-t border-dark-400 bg-dark-100/50">
               <div className="flex items-center gap-1">
                 <button
                   type="button"
@@ -823,7 +821,7 @@ export default function Feed() {
               <button
                 onClick={handleSubmit}
                 disabled={(!newContent.trim() && newImages.length === 0) || createMutation.isPending || uploading}
-                className="flex items-center gap-1.5 px-4 py-1.5 text-xs font-semibold bg-gradient-to-r from-accent to-accent-hover text-white rounded-lg hover:from-accent-hover hover:to-accent disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm"
+                className="flex items-center gap-1.5 px-4 py-1.5 text-xs font-semibold bg-accent text-white rounded-lg hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed transition-all"
               >
                 {createMutation.isPending || uploading ? (
                   <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -845,7 +843,7 @@ export default function Feed() {
               animate={{ opacity: 1, y: 0 }}
               className="flex flex-col items-center justify-center py-24"
             >
-              <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-accent/10 to-transparent border border-border-light flex items-center justify-center mb-5 shadow-lg shadow-accent/5">
+              <div className="w-20 h-20 rounded-3xl bg-dark-200 border border-dark-400 flex items-center justify-center mb-5">
                 <FiCamera className="h-8 w-8 text-accent-light" />
               </div>
               <h3 className="text-lg font-semibold text-text-primary">No posts yet</h3>
@@ -880,7 +878,7 @@ export default function Feed() {
                   animate={{ opacity: 1 }}
                   className="flex flex-col items-center py-12"
                 >
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center mb-3 glow-accent shadow-lg shadow-accent/10">
+                  <div className="w-12 h-12 rounded-full bg-dark-200 border border-dark-400 flex items-center justify-center mb-3">
                     <FiHeart className="h-5 w-5 text-accent-light" />
                   </div>
                   <p className="text-sm font-medium text-text-primary">You're all caught up!</p>
@@ -897,7 +895,7 @@ export default function Feed() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
                 onClick={() => scrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' })}
-                className="fixed bottom-20 right-6 z-30 w-10 h-10 rounded-xl bg-gradient-to-r from-accent to-accent-hover text-white shadow-lg shadow-accent/20 flex items-center justify-center hover:shadow-accent/30 transition-all"
+                className="fixed bottom-20 right-6 z-30 w-10 h-10 rounded-xl bg-accent text-white shadow-lg shadow-accent/20 flex items-center justify-center hover:bg-accent-hover transition-all"
               >
                 <FiChevronDown className="h-5 w-5 rotate-180" />
               </motion.button>

@@ -121,7 +121,7 @@ export default function ChatList() {
               animate={{ opacity: 1, y: 0 }}
               className="text-center py-20 w-full max-w-sm"
             >
-              <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-accent/5 to-transparent border border-border-light flex items-center justify-center mx-auto mb-5 shadow-lg shadow-accent/5">
+              <div className="w-20 h-20 rounded-2xl bg-dark-200 border border-dark-400 flex items-center justify-center mx-auto mb-5">
                 <FiUsers className="h-8 w-8 text-accent-light" />
               </div>
               <h3 className="text-lg font-semibold text-text-primary mb-1.5">

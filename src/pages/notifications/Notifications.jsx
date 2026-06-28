@@ -117,7 +117,7 @@ export default function Notifications() {
           {isLoading ? (
             <div className="space-y-3">
               {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="flex items-center gap-3 p-4 glass-card rounded-2xl">
+                <div key={i} className="flex items-center gap-3 p-4 bg-dark-100 rounded-2xl">
                   <Skeleton className="w-10 h-10 rounded-full" />
                   <div className="flex-1 space-y-2">
                     <Skeleton className="h-3 w-48" />
@@ -133,7 +133,7 @@ export default function Notifications() {
               className="flex items-center justify-center py-24"
             >
               <div className="text-center">
-                <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-accent/10 to-transparent border border-border-light flex items-center justify-center mx-auto mb-5">
+                <div className="w-20 h-20 rounded-3xl bg-dark-200 border border-dark-400 flex items-center justify-center mx-auto mb-5">
                   <FiBell className="h-9 w-9 text-accent-light" />
                 </div>
                 <h3 className="text-lg font-semibold text-text-primary">All clear</h3>
@@ -147,7 +147,7 @@ export default function Notifications() {
               return (
                 <div key={groupKey}>
                   <div className="flex items-center gap-2 mb-3 px-1">
-                    <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-accent/15 to-accent/5 flex items-center justify-center">
+                    <div className="w-6 h-6 rounded-lg bg-dark-200 flex items-center justify-center">
                       <GroupIcon className="h-3 w-3 text-accent-light" />
                     </div>
                     <h2 className="text-xs font-semibold text-text-muted uppercase tracking-widest">{groupLabel.label}</h2>
@@ -164,14 +164,14 @@ export default function Notifications() {
                           transition={{ delay: i * 0.03 }}
                         >
                           <div className={`rounded-2xl border transition-all duration-200 ${
-                            !notif.read ? 'border-accent/20 glass-card' : 'border-border glass-card'
+                            !notif.read ? 'border-accent/30 bg-dark-100' : 'border-dark-400 bg-dark-100'
                           }`}>
                             <div className={`flex items-start gap-3 p-4 ${
                               !notif.read ? 'border-l-[3px] border-accent rounded-l-2xl' : ''
                             }`}>
                               <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
                                 !notif.read
-                                  ? 'bg-gradient-to-br from-accent/15 to-accent/5'
+                                  ? 'bg-dark-200'
                                   : 'bg-dark-350/60'
                               }`}>
                                 <Icon className={`h-4 w-4 ${config.color}`} />

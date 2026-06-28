@@ -385,7 +385,7 @@ export default function ChatRoom() {
 
   return (
     <div className="flex-1 flex flex-col h-full relative">
-      <header className="h-14 min-h-[56px] bg-dark-100/70 backdrop-blur-xl border-b border-border flex items-center justify-between px-4 gap-3">
+      <header className="h-14 min-h-[56px] bg-dark-100 border-b border-border flex items-center justify-between px-4 gap-3">
         <div className="flex items-center gap-3 min-w-0">
           <button
             onClick={() => navigate('/chat')}
@@ -467,13 +467,13 @@ export default function ChatRoom() {
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
               onClick={(e) => e.stopPropagation()}
-              className="absolute right-0 top-0 bottom-0 w-72 bg-dark-150/95 backdrop-blur-2xl border-l border-border-light shadow-2xl flex flex-col"
+              className="absolute right-0 top-0 bottom-0 w-72 bg-dark-200 border-l border-border-light flex flex-col"
             >
               <div className="flex items-center justify-between px-5 py-4 border-b border-border">
                 <h3 className="text-sm font-semibold text-text-primary">Options</h3>
                 <button
                   onClick={() => setShowMenu(false)}
-                  className="p-1.5 rounded-lg text-text-muted hover:text-text-primary hover:bg-dark-350/60 transition-all"
+                  className="p-1.5 rounded-lg text-text-muted hover:text-text-primary hover:bg-dark-250 transition-all"
                 >
                   <FiX className="h-4 w-4" />
                 </button>
@@ -482,7 +482,7 @@ export default function ChatRoom() {
                 <div className="px-3">
                   <button
                     onClick={handleUnfriend}
-                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-text-primary hover:bg-dark-350/60 transition-colors"
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-text-primary hover:bg-dark-250 transition-colors"
                   >
                     <FiUserX className="h-4 w-4 text-text-muted shrink-0" />
                     Unfriend
@@ -492,7 +492,7 @@ export default function ChatRoom() {
                   {isBlocked ? (
                     <button
                       onClick={handleUnblock}
-                      className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-text-primary hover:bg-dark-350/60 transition-colors"
+                      className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-text-primary hover:bg-dark-250 transition-colors"
                     >
                       <FiUserCheck className="h-4 w-4 text-text-muted shrink-0" />
                       Unblock
@@ -504,7 +504,7 @@ export default function ChatRoom() {
                         <button
                           key={d.label}
                           onClick={() => handleBlock(d.minutes)}
-                          className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-text-primary hover:bg-dark-350/60 transition-colors"
+                          className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-text-primary hover:bg-dark-250 transition-colors"
                         >
                           <FiClock className="h-4 w-4 text-text-muted shrink-0" />
                           {d.label}
@@ -545,7 +545,7 @@ export default function ChatRoom() {
                       ) : (
                         <button
                           onClick={() => setCustomBlock(true)}
-                          className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-text-muted hover:text-text-primary hover:bg-dark-350/60 transition-colors"
+                          className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-text-muted hover:text-text-primary hover:bg-dark-250 transition-colors"
                         >
                           <FiClock className="h-4 w-4" />
                           Custom...
@@ -558,7 +558,7 @@ export default function ChatRoom() {
                 <div className="px-3">
                   <button
                     onClick={() => setShowReportModal(true)}
-                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-text-primary hover:bg-dark-350/60 transition-colors"
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-text-primary hover:bg-dark-250 transition-colors"
                   >
                     <FiFlag className="h-4 w-4 text-text-muted shrink-0" />
                     Report User
@@ -568,7 +568,7 @@ export default function ChatRoom() {
                 <div className="px-3">
                   <button
                     onClick={handleMute}
-                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-text-primary hover:bg-dark-350/60 transition-colors"
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-text-primary hover:bg-dark-250 transition-colors"
                   >
                     <FiBellOff className="h-4 w-4 text-text-muted shrink-0" />
                     {isMuted ? 'Unmute notifications' : 'Mute notifications'}
@@ -579,7 +579,7 @@ export default function ChatRoom() {
                         <button
                           key={s.label}
                           onClick={() => handleSnooze(s.ms)}
-                          className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-text-muted hover:text-text-primary hover:bg-dark-350/60 transition-colors"
+                          className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-text-muted hover:text-text-primary hover:bg-dark-250 transition-colors"
                         >
                           <FiClock className="h-3.5 w-3.5" />
                           Mute for {s.label}
@@ -600,7 +600,7 @@ export default function ChatRoom() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={() => setShowInfo(false)}
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50"
+          className="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.92 }}
@@ -608,7 +608,7 @@ export default function ChatRoom() {
             exit={{ opacity: 0, scale: 0.92 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
             onClick={(e) => e.stopPropagation()}
-            className="bg-dark-200/95 backdrop-blur-md border border-border-light rounded-2xl p-6 w-[90%] max-w-sm flex flex-col items-center gap-3 shadow-2xl"
+            className="bg-dark-200 border border-border-light rounded-2xl p-6 w-[90%] max-w-sm flex flex-col items-center gap-3"
           >
             <div className="relative">
               <Avatar src={otherUserProfile.photoURL} name={otherUserProfile.displayName} size="xl" status={otherStatus} />
@@ -620,24 +620,24 @@ export default function ChatRoom() {
               </p>
             </div>
             <div className="w-full space-y-2 mt-2">
-              <div className="flex items-center gap-3 px-4 py-2.5 bg-dark-350/60 backdrop-blur-sm rounded-xl border border-border-light">
+              <div className="flex items-center gap-3 px-4 py-2.5 bg-dark-250 rounded-xl border border-border-light">
                 <FiMail className="h-4 w-4 text-text-muted shrink-0" />
                 <span className="text-sm text-text-primary truncate">{otherUserProfile.email}</span>
               </div>
-              <div className="flex items-center gap-3 px-4 py-2.5 bg-dark-350/60 backdrop-blur-sm rounded-xl border border-border-light">
+              <div className="flex items-center gap-3 px-4 py-2.5 bg-dark-250 rounded-xl border border-border-light">
                 <FiCalendar className="h-4 w-4 text-text-muted shrink-0" />
                 <span className="text-sm text-text-primary">Joined {new Date(otherUserProfile.createdAt).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}</span>
               </div>
             </div>
             {e2eeEnabled && (
-              <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-accent/10 to-accent/5 rounded-xl border border-accent/20 w-full">
+              <div className="flex items-center gap-2 px-4 py-2 bg-dark-200 rounded-xl border border-accent/20 w-full">
                 <FiLock className="h-4 w-4 text-accent-light shrink-0" />
                 <span className="text-xs text-accent-light">Messages are end-to-end encrypted</span>
               </div>
             )}
             <button
               onClick={() => setShowInfo(false)}
-              className="mt-2 w-9 h-9 rounded-xl flex items-center justify-center text-text-muted hover:text-text-primary hover:bg-dark-350/60 transition-all"
+              className="mt-2 w-9 h-9 rounded-xl flex items-center justify-center text-text-muted hover:text-text-primary hover:bg-dark-250 transition-all"
               aria-label="Close info"
             >
               <FiX className="h-5 w-5" />
@@ -698,7 +698,7 @@ export default function ChatRoom() {
                 animate={{ opacity: 1, y: 0 }}
                 className="flex flex-col items-center justify-center py-16 px-4 text-center"
               >
-                <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-accent/5 to-transparent border border-border-light flex items-center justify-center mb-5 shadow-lg shadow-accent/5">
+                <div className="w-20 h-20 rounded-3xl bg-dark-200 border border-dark-400 flex items-center justify-center mb-5">
                   <FiMessageSquare className="h-9 w-9 text-accent-light" />
                 </div>
                 <h3 className="text-lg font-semibold text-text-primary mb-2">Start a conversation</h3>
@@ -707,19 +707,19 @@ export default function ChatRoom() {
                 </p>
                 <div className="flex items-center gap-6 text-text-muted">
                   <div className="flex flex-col items-center gap-1.5">
-                    <div className="w-11 h-11 rounded-xl bg-dark-350/60 border border-border-light flex items-center justify-center">
+                    <div className="w-11 h-11 rounded-xl bg-dark-250 border border-border-light flex items-center justify-center">
                       <FiSend className="h-4 w-4" />
                     </div>
                     <span className="text-[10px] font-medium">Text</span>
                   </div>
                   <div className="flex flex-col items-center gap-1.5">
-                    <div className="w-11 h-11 rounded-xl bg-dark-350/60 border border-border-light flex items-center justify-center">
+                    <div className="w-11 h-11 rounded-xl bg-dark-250 border border-border-light flex items-center justify-center">
                       <FiImage className="h-4 w-4" />
                     </div>
                     <span className="text-[10px] font-medium">Image</span>
                   </div>
                   <div className="flex flex-col items-center gap-1.5">
-                    <div className="w-11 h-11 rounded-xl bg-dark-350/60 border border-border-light flex items-center justify-center">
+                    <div className="w-11 h-11 rounded-xl bg-dark-250 border border-border-light flex items-center justify-center">
                       <FiFile className="h-4 w-4" />
                     </div>
                     <span className="text-[10px] font-medium">PDF</span>
@@ -747,7 +747,7 @@ export default function ChatRoom() {
       )}
 
       {friendStatusData?.blockedByMe && (
-        <div className="px-4 py-3 bg-gradient-to-r from-danger/5 to-transparent backdrop-blur-sm border-t border-border border-danger/10">
+        <div className="px-4 py-3 bg-danger/10 border-t border-border border-danger/10">
           <div className="flex items-center justify-center gap-2">
             <FiSlash className="h-4 w-4 text-danger shrink-0" />
             <p className="text-sm text-text-muted">
@@ -757,7 +757,7 @@ export default function ChatRoom() {
         </div>
       )}
       {friendStatusData?.blockedByThem && (
-        <div className="px-4 py-3 bg-gradient-to-r from-warning/5 to-transparent backdrop-blur-sm border-t border-border border-warning/10">
+        <div className="px-4 py-3 bg-warning/10 border-t border-border border-warning/10">
           <div className="flex items-center justify-center gap-2">
             <FiSlash className="h-4 w-4 text-warning shrink-0" />
             <p className="text-sm text-text-muted">
@@ -774,7 +774,7 @@ export default function ChatRoom() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
             onClick={() => setViewingImage(null)}
           >
             <button

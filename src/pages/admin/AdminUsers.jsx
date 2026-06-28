@@ -73,7 +73,7 @@ export default function AdminUsers() {
           {isLoading ? (
             <div className="space-y-3">
               {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="glass-card rounded-2xl p-4 animate-pulse">
+                <div key={i} className="bg-dark-100 rounded-xl p-4 animate-pulse">
                   <div className="h-12 bg-dark-300 rounded-xl" />
                 </div>
               ))}
@@ -86,7 +86,7 @@ export default function AdminUsers() {
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.03 }}
-                  className={`glass-card rounded-2xl p-4 card-shadow ${user.banned ? 'border-danger/20' : ''}`}
+                  className={`bg-dark-100 rounded-xl p-4 ${user.banned ? 'border-danger/20' : ''}`}
                 >
                   <div className="flex items-center gap-4">
                     <Avatar src={user.photoURL} name={user.displayName} size="md" status={user.status} />

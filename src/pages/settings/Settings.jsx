@@ -54,7 +54,7 @@ function Toggle({ value, onChange }) {
       onClick={onChange}
       role="switch"
       aria-checked={value}
-      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-accent/50 shadow-sm ${value ? 'bg-gradient-to-r from-accent to-accent-light shadow-accent/20' : 'bg-dark-600'}`}
+      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-accent/50 shadow-sm ${value ? 'bg-accent' : 'bg-dark-600'}`}
     >
       <span
         className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${value ? 'translate-x-5' : 'translate-x-0'}`}
@@ -91,7 +91,7 @@ function SectionCard({ icon: Icon, label, description, children, className = '',
     <div className={`group flex items-center justify-between px-4 py-3.5 hover:bg-dark-300/40 transition-colors ${className}`}>
       <div className="flex items-center gap-3 min-w-0">
         <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
-          accent ? 'bg-gradient-to-br from-accent/15 to-accent/5' : 'bg-dark-400/80 group-hover:bg-dark-500/80'
+          accent ? 'bg-accent-bg' : 'bg-dark-400/80 group-hover:bg-dark-500/80'
         }`}>
           {Icon && <Icon className={`h-4 w-4 ${accent ? 'text-accent-light' : 'text-text-muted'}`} />}
         </div>
@@ -113,12 +113,12 @@ function SectionGroup({ icon: Icon, title, delay = 0, children }) {
       transition={{ delay }}
     >
       <div className="flex items-center gap-2 mb-3 px-1">
-        <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-accent/15 to-accent/5 flex items-center justify-center">
+        <div className="w-6 h-6 rounded-lg bg-dark-200 flex items-center justify-center">
           <Icon className="h-3 w-3 text-accent-light" />
         </div>
         <h2 className="text-xs font-semibold text-text-muted uppercase tracking-widest">{title}</h2>
       </div>
-      <div className="glass-card rounded-xl overflow-hidden divide-y divide-border shadow-card">
+      <div className="bg-dark-100 border border-dark-400 rounded-xl overflow-hidden divide-y divide-dark-400">
         {children}
       </div>
     </motion.div>
@@ -299,7 +299,7 @@ export default function Settings() {
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="glass-card rounded-2xl p-5 flex items-center gap-4 card-shadow"
+            className="bg-dark-100 border border-dark-400 rounded-xl p-5 flex items-center gap-4"
           >
             <div className="relative shrink-0">
               <Avatar src={user?.photoURL} name={user?.displayName} size="lg" status="online" className="ring-2 ring-accent/30" />
@@ -343,7 +343,7 @@ export default function Settings() {
                   <FiChevronDown className={`h-3.5 w-3.5 transition-transform ${langOpen ? 'rotate-180' : ''}`} />
                 </button>
                 {langOpen && (
-                  <div className="absolute right-0 top-full mt-1.5 w-36 bg-dark-200 border border-border rounded-xl shadow-2xl py-1 z-50 backdrop-blur-md">
+                  <div className="absolute right-0 top-full mt-1.5 w-36 bg-dark-200 border border-dark-450 rounded-xl shadow-xl py-1 z-50">
                     {languages.map((lang) => (
                       <button
                         key={lang.code}
@@ -498,7 +498,7 @@ export default function Settings() {
               {t('settings.sign.out')}
             </Button>
 
-            <div className="glass-card rounded-xl overflow-hidden border-danger/20 card-shadow">
+            <div className="bg-dark-100 border border-danger/20 rounded-xl overflow-hidden">
               <div className="px-4 py-3 bg-danger/5 border-b border-danger/10">
                 <div className="flex items-center gap-2">
                   <FiAlertTriangle className="h-4 w-4 text-danger" />
