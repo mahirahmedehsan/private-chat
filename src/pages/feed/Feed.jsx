@@ -5,16 +5,20 @@ import { useSelector } from 'react-redux'
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   FiSmile, FiMessageCircle, FiSend, FiTrash2, FiGlobe, FiLock,
-  FiImage, FiX, FiCamera, FiChevronDown, FiHeart, FiMoreHorizontal,
+  FiImage, FiX, FiCamera, FiChevronDown, FiHeart, FiMoreHorizontal, FiFlag,
 } from 'react-icons/fi'
 import { getFeed, createNote, deleteNote, toggleReaction, addComment, toggleCommentReaction, deleteComment } from '../../api/notes'
 import { uploadFile } from '../../api/upload'
 import { getSocket } from '../../config/socket'
 import { backupToDrive } from '../../utils/backupToDrive'
+import { createReport } from '../../api/admin'
 import TopBar from '../../components/layout/TopBar'
 import Avatar from '../../components/ui/Avatar'
 import Button from '../../components/ui/Button'
 import { NoteSkeleton } from '../../components/ui/Skeleton'
+import Modal from '../../components/ui/Modal'
+import { addToast } from '../../store/slices/uiSlice'
+import { useDispatch } from 'react-redux'
 
 const noteEmojis = ['👍', '❤️', '😂', '😮', '😢', '🙏']
 
@@ -56,12 +60,27 @@ function EmojiPicker({ emojis, myReactions, onSelect, align = 'left' }) {
 
 function PostCard({ note, currentUserId, onReact, onComment, onDelete, onDeleteComment, onCommentReact }) {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const [showComments, setShowComments] = useState(false)
   const [commentText, setCommentText] = useState('')
   const [showNotePicker, setShowNotePicker] = useState(false)
   const [showCommentPicker, setShowCommentPicker] = useState(null)
   const [imageViewer, setImageViewer] = useState(null)
+  const [showReportModal, setShowReportModal] = useState(false)
+  const [reportReason, setReportReason] = useState('')
+  const [reportDesc, setReportDesc] = useState('')
   const isAuthor = note.author?.uid === currentUserId
+
+  const reportMutation = useMutation({
+    mutationFn: (payload) => createReport(payload),
+    onSuccess: () => {
+      dispatch(addToast({ type: 'success', title: 'Report submitted' }))
+      setShowReportModal(false)
+      setReportReason('')
+      setReportDesc('')
+    },
+    onError: () => dispatch(addToast({ type: 'error', title: 'Failed to submit report' })),
+  })
 
   const handleReact = (emoji) => {
     onReact(note._id, emoji)
@@ -119,13 +138,21 @@ function PostCard({ note, currentUserId, onReact, onComment, onDelete, onDeleteC
             <p className="text-xs text-text-muted mt-0.5">{formatTime(note.createdAt)}</p>
           </div>
           <div className="flex items-center gap-1 shrink-0">
-            {isAuthor && (
+            {isAuthor ? (
               <button
                 onClick={() => onDelete(note._id)}
                 className="p-1.5 rounded-lg text-text-muted hover:text-danger hover:bg-danger-bg transition-all opacity-0 group-hover:opacity-100"
                 aria-label="Delete post"
               >
                 <FiTrash2 className="h-3.5 w-3.5" />
+              </button>
+            ) : (
+              <button
+                onClick={() => setShowReportModal(true)}
+                className="p-1.5 rounded-lg text-text-muted hover:text-danger hover:bg-danger-bg transition-all opacity-0 group-hover:opacity-100"
+                aria-label="Report post"
+              >
+                <FiFlag className="h-3.5 w-3.5" />
               </button>
             )}
           </div>
@@ -363,6 +390,65 @@ function PostCard({ note, currentUserId, onReact, onComment, onDelete, onDeleteC
           </motion.div>
         )}
       </AnimatePresence>
+
+      <Modal
+        isOpen={showReportModal}
+        onClose={() => { setShowReportModal(false); setReportReason(''); setReportDesc('') }}
+        title="Report Post"
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-text-secondary">
+            Report this post by <strong className="text-text-primary">{note.author?.displayName}</strong>.
+          </p>
+          <div>
+            <label className="text-xs text-text-muted block mb-1.5">Reason</label>
+            <select
+              value={reportReason}
+              onChange={(e) => setReportReason(e.target.value)}
+              className="w-full bg-dark-350/80 border border-border-light rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-accent/30"
+            >
+              <option value="">Select a reason</option>
+              <option value="Harassment">Harassment</option>
+              <option value="Spam">Spam</option>
+              <option value="Inappropriate content">Inappropriate content</option>
+              <option value="Misinformation">Misinformation</option>
+              <option value="Hate speech">Hate speech</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div>
+            <label className="text-xs text-text-muted block mb-1.5">Description (optional)</label>
+            <textarea
+              value={reportDesc}
+              onChange={(e) => setReportDesc(e.target.value)}
+              rows={3}
+              maxLength={500}
+              placeholder="Provide additional details..."
+              className="w-full bg-dark-350/80 border border-border-light rounded-xl px-4 py-2.5 text-sm text-text-primary placeholder-text-muted resize-none focus:outline-none focus:ring-2 focus:ring-accent/30"
+            />
+          </div>
+          <div className="flex gap-2">
+            <Button
+              variant="ghost"
+              size="md"
+              className="flex-1"
+              onClick={() => { setShowReportModal(false); setReportReason(''); setReportDesc('') }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="danger"
+              size="md"
+              className="flex-1"
+              disabled={!reportReason}
+              onClick={() => reportMutation.mutate({ targetType: 'note', targetId: note._id, reason: reportReason, description: reportDesc })}
+              loading={reportMutation.isPending}
+            >
+              Submit Report
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </motion.div>
   )
 }

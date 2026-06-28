@@ -16,10 +16,22 @@ const FriendProfile = lazy(() => import('./pages/profile/FriendProfile'))
 const Settings = lazy(() => import('./pages/settings/Settings'))
 const Notifications = lazy(() => import('./pages/notifications/Notifications'))
 const Friends = lazy(() => import('./pages/friends/Friends'))
+const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'))
+const AdminUsers = lazy(() => import('./pages/admin/AdminUsers'))
+const AdminNotes = lazy(() => import('./pages/admin/AdminNotes'))
+const AdminReports = lazy(() => import('./pages/admin/AdminReports'))
+const AdminChat = lazy(() => import('./pages/admin/AdminChat'))
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated } = useSelector((s) => s.auth)
   if (!isAuthenticated) return <Navigate to="/login" replace />
+  return children
+}
+
+function AdminRoute({ children }) {
+  const { isAuthenticated, isAdmin } = useSelector((s) => s.auth)
+  if (!isAuthenticated) return <Navigate to="/login" replace />
+  if (!isAdmin) return <Navigate to="/chat" replace />
   return children
 }
 
@@ -65,6 +77,11 @@ function AppContent() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/profile/:uid" element={<FriendProfile />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+          <Route path="/admin/users" element={<AdminRoute><AdminUsers /></AdminRoute>} />
+          <Route path="/admin/notes" element={<AdminRoute><AdminNotes /></AdminRoute>} />
+          <Route path="/admin/reports" element={<AdminRoute><AdminReports /></AdminRoute>} />
+          <Route path="/admin/chat" element={<AdminRoute><AdminChat /></AdminRoute>} />
           <Route path="*" element={<Navigate to="/chat" replace />} />
         </Route>
       </Routes>

@@ -24,6 +24,7 @@ const initialState = {
   error: null,
   e2eeEnabled: false,
   e2eeReady: false,
+  isAdmin: false,
   ...preloadedState,
 }
 
@@ -37,10 +38,12 @@ const authSlice = createSlice({
       state.token = token
       state.googleAccessToken = googleAccessToken || null
       state.isAuthenticated = true
+      state.isAdmin = user?.role === 'admin'
       state.error = null
     },
     setUser: (state, action) => {
       state.user = action.payload
+      state.isAdmin = action.payload?.role === 'admin'
     },
     setLoading: (state, action) => {
       state.loading = action.payload
@@ -54,6 +57,7 @@ const authSlice = createSlice({
       state.token = null
       state.googleAccessToken = null
       state.isAuthenticated = false
+      state.isAdmin = false
       state.error = null
       state.e2eeEnabled = false
       state.e2eeReady = false

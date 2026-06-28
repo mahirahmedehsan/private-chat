@@ -1,7 +1,7 @@
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { motion } from 'framer-motion'
-import { FiMessageSquare, FiUsers, FiHome, FiUser, FiSettings } from 'react-icons/fi'
+import { FiMessageSquare, FiUsers, FiHome, FiUser, FiSettings, FiShield } from 'react-icons/fi'
 import { setActiveSection } from '../../store/slices/uiSlice'
 import { useT } from '../../locales/i18n.jsx'
 import { useKeyboardNav } from '../../hooks/useKeyboardNav'
@@ -12,6 +12,7 @@ const navItems = [
   { id: 'friends', label: 'Friends', icon: FiUsers, path: '/friends' },
   { id: 'profile', label: 'Profile', icon: FiUser, path: '/profile' },
   { id: 'settings', label: 'Settings', icon: FiSettings, path: '/settings' },
+  { id: 'admin', label: 'Admin', icon: FiShield, path: '/admin' },
 ]
 
 export default function MobileNav() {
@@ -19,6 +20,7 @@ export default function MobileNav() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const location = useLocation()
+  const { isAdmin } = useSelector((s) => s.auth)
   const activeSection = useSelector((s) => s.ui.activeSection)
   const unreadTotal = useSelector((s) => (s.chat.notificationUnreadCount || 0) + (s.chat.conversations.reduce((sum, c) => sum + (c.unreadCount || 0), 0)))
   const currentPath = location.pathname.split('/')[1] || 'chat'
@@ -34,8 +36,8 @@ export default function MobileNav() {
   return (
     <nav className="hide-desktop fixed bottom-0 left-0 right-0 z-40 bg-dark-150/85 backdrop-blur-2xl border-t border-border safe-area-bottom" aria-label="Mobile navigation">
       <div className="flex items-center justify-around h-14 max-w-lg mx-auto px-2">
-        {navItems.map((item) => {
-          const isActive = activeId === item.id
+        {navItems.filter((item) => item.id !== 'admin' || isAdmin).map((item) => {
+          const isActive = activeId === item.id || (item.id === 'admin' && location.pathname.startsWith('/admin'))
           const Icon = item.icon
 
           return (

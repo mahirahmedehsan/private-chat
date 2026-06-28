@@ -1,19 +1,38 @@
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { motion, AnimatePresence } from 'framer-motion'
-import { FiArrowLeft, FiFileText, FiHeart, FiUsers, FiGlobe, FiLock, FiMessageCircle, FiMail, FiCalendar, FiMapPin, FiAtSign } from 'react-icons/fi'
-import { useQuery } from '@tanstack/react-query'
+import { FiArrowLeft, FiFileText, FiHeart, FiUsers, FiGlobe, FiLock, FiMessageCircle, FiMail, FiCalendar, FiMapPin, FiAtSign, FiFlag } from 'react-icons/fi'
+import { useQuery, useMutation } from '@tanstack/react-query'
 import { getUserProfile } from '../../api/users'
+import { createReport } from '../../api/admin'
 import TopBar from '../../components/layout/TopBar'
 import Avatar from '../../components/ui/Avatar'
 import { Skeleton } from '../../components/ui/Skeleton'
+import Button from '../../components/ui/Button'
+import Modal from '../../components/ui/Modal'
+import { addToast } from '../../store/slices/uiSlice'
 
 export default function FriendProfile() {
   const { uid } = useParams()
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const onlineUsers = useSelector((s) => s.chat.onlineUsers)
   const [activeTab, setActiveTab] = useState('posts')
+  const [showReportModal, setShowReportModal] = useState(false)
+  const [reportReason, setReportReason] = useState('')
+  const [reportDesc, setReportDesc] = useState('')
+
+  const reportMutation = useMutation({
+    mutationFn: (payload) => createReport(payload),
+    onSuccess: () => {
+      dispatch(addToast({ type: 'success', title: 'Report submitted' }))
+      setShowReportModal(false)
+      setReportReason('')
+      setReportDesc('')
+    },
+    onError: () => dispatch(addToast({ type: 'error', title: 'Failed to submit report' })),
+  })
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['userProfile', uid],
@@ -94,7 +113,16 @@ export default function FriendProfile() {
                 <Avatar src={user.photoURL} name={user.displayName} size="2xl" status={isOnline ? 'online' : 'offline'} className="ring-4 ring-dark-150/80" />
               </div>
               <div className="flex-1 min-w-0 pb-1">
-                <h1 className="text-xl font-bold text-text-primary truncate">{user.displayName}</h1>
+                <div className="flex items-center justify-between gap-2">
+                  <h1 className="text-xl font-bold text-text-primary truncate">{user.displayName}</h1>
+                  <button
+                    onClick={() => setShowReportModal(true)}
+                    className="p-2 rounded-xl text-text-muted hover:text-danger hover:bg-danger/10 transition-all shrink-0"
+                    aria-label="Report user"
+                  >
+                    <FiFlag className="h-4 w-4" />
+                  </button>
+                </div>
                 {user.email && (
                   <div className="flex items-center gap-1.5 mt-0.5">
                     <FiAtSign className="h-3 w-3 text-text-muted" />
@@ -306,6 +334,65 @@ export default function FriendProfile() {
           </div>
         </div>
       </div>
+
+      <Modal
+        isOpen={showReportModal}
+        onClose={() => { setShowReportModal(false); setReportReason(''); setReportDesc('') }}
+        title="Report User"
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-text-secondary">
+            Report <strong className="text-text-primary">{user.displayName}</strong> for violating the community guidelines.
+          </p>
+          <div>
+            <label className="text-xs text-text-muted block mb-1.5">Reason</label>
+            <select
+              value={reportReason}
+              onChange={(e) => setReportReason(e.target.value)}
+              className="w-full bg-dark-350/80 border border-border-light rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-accent/30"
+            >
+              <option value="">Select a reason</option>
+              <option value="Harassment">Harassment</option>
+              <option value="Spam">Spam</option>
+              <option value="Inappropriate content">Inappropriate content</option>
+              <option value="Fake account">Fake account</option>
+              <option value="Hate speech">Hate speech</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div>
+            <label className="text-xs text-text-muted block mb-1.5">Description (optional)</label>
+            <textarea
+              value={reportDesc}
+              onChange={(e) => setReportDesc(e.target.value)}
+              rows={3}
+              maxLength={500}
+              placeholder="Provide additional details..."
+              className="w-full bg-dark-350/80 border border-border-light rounded-xl px-4 py-2.5 text-sm text-text-primary placeholder-text-muted resize-none focus:outline-none focus:ring-2 focus:ring-accent/30"
+            />
+          </div>
+          <div className="flex gap-2">
+            <Button
+              variant="ghost"
+              size="md"
+              className="flex-1"
+              onClick={() => { setShowReportModal(false); setReportReason(''); setReportDesc('') }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="danger"
+              size="md"
+              className="flex-1"
+              disabled={!reportReason}
+              onClick={() => reportMutation.mutate({ targetType: 'user', targetId: uid, reason: reportReason, description: reportDesc })}
+              loading={reportMutation.isPending}
+            >
+              Submit Report
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </>
   )
 }

@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
-  FiMessageSquare, FiUsers, FiSettings, FiHome, FiLogOut, FiUser,
+  FiMessageSquare, FiUsers, FiSettings, FiHome, FiLogOut, FiUser, FiShield,
 } from 'react-icons/fi'
 import { setActiveSection, setMobileSidebarOpen } from '../../store/slices/uiSlice'
 import { logout as logoutAction } from '../../store/slices/authSlice'
@@ -16,13 +16,14 @@ const navItems = [
   { id: 'friends', label: 'Friends', icon: FiUsers, path: '/friends' },
   { id: 'profile', label: 'Profile', icon: FiUser, path: '/profile' },
   { id: 'settings', label: 'Settings', icon: FiSettings, path: '/settings' },
+  { id: 'admin', label: 'Admin', icon: FiShield, path: '/admin' },
 ]
 
 export default function Sidebar() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const location = useLocation()
-  const { user } = useSelector((s) => s.auth)
+  const { user, isAdmin } = useSelector((s) => s.auth)
   const { activeSection } = useSelector((s) => s.ui)
 
   const currentPath = location.pathname.split('/')[1] || 'chat'
@@ -60,8 +61,8 @@ export default function Sidebar() {
       <div className="w-7 h-px bg-gradient-to-r from-transparent via-border to-transparent my-1" />
 
       <nav className="flex flex-col items-center gap-1 flex-1" aria-label="Main navigation">
-        {navItems.map((item) => {
-          const isActive = activeId === item.id
+        {navItems.filter((item) => item.id !== 'admin' || isAdmin).map((item) => {
+          const isActive = activeId === item.id || (item.id === 'admin' && location.pathname.startsWith('/admin'))
           return (
             <motion.button
               key={item.id}
