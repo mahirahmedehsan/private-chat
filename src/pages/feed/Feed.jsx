@@ -146,18 +146,21 @@ function PostCard({ note, currentUserId, onReact, onComment, onDelete, onDeleteC
               >
                 <FiTrash2 className="h-3.5 w-3.5" />
               </button>
-            ) : note.isFriend ? (
-              <span className="flex items-center gap-1.5 px-2 py-1 text-[11px] text-text-muted bg-dark-350/50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
-                <FiUserCheck className="h-3 w-3" /> Friends
-              </span>
             ) : (
-              <button
-                onClick={() => setShowReportModal(true)}
-                className="p-1.5 rounded-lg text-text-muted hover:text-danger hover:bg-danger-bg transition-all opacity-0 group-hover:opacity-100"
-                aria-label="Report post"
-              >
-                <FiFlag className="h-3.5 w-3.5" />
-              </button>
+              <>
+                {note.isFriend && (
+                  <span className="flex items-center gap-1 px-2 py-1 text-[10px] text-text-muted bg-dark-350/50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                    <FiUserCheck className="h-2.5 w-2.5" /> Friends
+                  </span>
+                )}
+                <button
+                  onClick={() => setShowReportModal(true)}
+                  className="p-1.5 rounded-lg text-text-muted hover:text-danger hover:bg-danger-bg transition-all opacity-0 group-hover:opacity-100"
+                  aria-label="Report post"
+                >
+                  <FiFlag className="h-3.5 w-3.5" />
+                </button>
+              </>
             )}
           </div>
         </div>
