@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux'
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   FiSmile, FiMessageCircle, FiSend, FiTrash2, FiGlobe, FiLock,
-  FiImage, FiX, FiCamera, FiChevronDown, FiHeart, FiMoreHorizontal, FiFlag,
+  FiImage, FiX, FiCamera, FiChevronDown, FiHeart, FiMoreHorizontal, FiFlag, FiUserCheck,
 } from 'react-icons/fi'
 import { getFeed, createNote, deleteNote, toggleReaction, addComment, toggleCommentReaction, deleteComment } from '../../api/notes'
 import { uploadFile } from '../../api/upload'
@@ -146,6 +146,10 @@ function PostCard({ note, currentUserId, onReact, onComment, onDelete, onDeleteC
               >
                 <FiTrash2 className="h-3.5 w-3.5" />
               </button>
+            ) : note.isFriend ? (
+              <span className="flex items-center gap-1.5 px-2 py-1 text-[11px] text-text-muted bg-dark-350/50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                <FiUserCheck className="h-3 w-3" /> Friends
+              </span>
             ) : (
               <button
                 onClick={() => setShowReportModal(true)}
