@@ -3,7 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { useSocket } from './hooks/useSocket'
 import { getCurrentUser } from './api/auth'
-import { setUser } from './store/slices/authSlice'
+import { setUser, setUserLoading } from './store/slices/authSlice'
 import ErrorBoundary from './components/ui/ErrorBoundary'
 import AppLayout from './components/layout/AppLayout'
 import { I18nProvider } from './locales/i18n.jsx'
@@ -52,7 +52,7 @@ function PageLoader() {
 }
 
 function AppContent() {
-  const { isAuthenticated } = useSelector((s) => s.auth)
+  const { isAuthenticated, userLoading } = useSelector((s) => s.auth)
   const dispatch = useDispatch()
   useSocket()
 
@@ -61,6 +61,7 @@ function AppContent() {
     getCurrentUser()
       .then((u) => { if (u) dispatch(setUser(u)) })
       .catch(() => {})
+      .finally(() => dispatch(setUserLoading(false)))
   }, [isAuthenticated])
 
   if (!isAuthenticated) {
@@ -72,6 +73,14 @@ function AppContent() {
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </Suspense>
+    )
+  }
+
+  if (userLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-dark-100">
+        <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+      </div>
     )
   }
 

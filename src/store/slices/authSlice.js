@@ -6,7 +6,7 @@ function loadState() {
     if (saved) {
       const parsed = JSON.parse(saved)
       if (parsed.token) {
-        return { ...parsed, loading: false, error: null }
+        return { ...parsed, loading: false, error: null, userLoading: true }
       }
     }
   } catch {}
@@ -25,6 +25,7 @@ const initialState = {
   e2eeEnabled: false,
   e2eeReady: false,
   isAdmin: false,
+  userLoading: false,
   ...preloadedState,
 }
 
@@ -39,11 +40,15 @@ const authSlice = createSlice({
       state.googleAccessToken = googleAccessToken || null
       state.isAuthenticated = true
       state.isAdmin = user?.role === 'admin'
+      state.userLoading = false
       state.error = null
     },
     setUser: (state, action) => {
       state.user = action.payload
       state.isAdmin = action.payload?.role === 'admin'
+    },
+    setUserLoading: (state, action) => {
+      state.userLoading = action.payload
     },
     setLoading: (state, action) => {
       state.loading = action.payload
@@ -58,6 +63,7 @@ const authSlice = createSlice({
       state.googleAccessToken = null
       state.isAuthenticated = false
       state.isAdmin = false
+      state.userLoading = false
       state.error = null
       state.e2eeEnabled = false
       state.e2eeReady = false
@@ -74,5 +80,5 @@ const authSlice = createSlice({
   },
 })
 
-export const { setCredentials, setUser, setLoading, setError, logout, clearError, setE2EEEnabled, setE2EEReady } = authSlice.actions
+export const { setCredentials, setUser, setLoading, setError, logout, clearError, setE2EEEnabled, setE2EEReady, setUserLoading } = authSlice.actions
 export default authSlice.reducer

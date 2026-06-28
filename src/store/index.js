@@ -23,7 +23,6 @@ store.subscribe(() => {
         token: auth.token,
         googleAccessToken: auth.googleAccessToken,
         isAuthenticated: auth.isAuthenticated,
-        isAdmin: auth.isAdmin,
       }))
     } catch {}
   }, 300)
