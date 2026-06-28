@@ -66,9 +66,11 @@ function PostCard({ note, currentUserId, onReact, onComment, onDelete, onDeleteC
   const [showNotePicker, setShowNotePicker] = useState(false)
   const [showCommentPicker, setShowCommentPicker] = useState(null)
   const [imageViewer, setImageViewer] = useState(null)
+  const [showMenu, setShowMenu] = useState(false)
   const [showReportModal, setShowReportModal] = useState(false)
   const [reportReason, setReportReason] = useState('')
   const [reportDesc, setReportDesc] = useState('')
+  const menuRef = useRef(null)
   const isAuthor = note.author?.uid === currentUserId
 
   const reportMutation = useMutation({
@@ -102,6 +104,15 @@ function PostCard({ note, currentUserId, onReact, onComment, onDelete, onDeleteC
   const allImages = note.images || []
   const hasImages = allImages.length > 0
 
+  useEffect(() => {
+    if (!showMenu) return
+    const handler = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) setShowMenu(false)
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [showMenu])
+
   return (
     <motion.div
       layout
@@ -110,7 +121,7 @@ function PostCard({ note, currentUserId, onReact, onComment, onDelete, onDeleteC
       exit={{ opacity: 0, y: -12 }}
       transition={{ type: 'spring', damping: 25, stiffness: 250 }}
     >
-      <div className="group bg-dark-150/70 backdrop-blur-sm border border-border rounded-2xl overflow-hidden hover:border-border-light hover:shadow-lg hover:shadow-black/10 transition-all duration-200 shadow-card post-card">
+      <div className="bg-dark-150/70 backdrop-blur-sm border border-border rounded-2xl overflow-hidden hover:border-border-light hover:shadow-lg hover:shadow-black/10 transition-all duration-200 shadow-card post-card">
 
         <div className="flex items-start gap-3 px-4 pt-4">
           <button type="button" onClick={() => navigate(`/profile/${note.author?.uid}`)} className="shrink-0">
@@ -137,31 +148,40 @@ function PostCard({ note, currentUserId, onReact, onComment, onDelete, onDeleteC
             </div>
             <p className="text-xs text-text-muted mt-0.5">{formatTime(note.createdAt)}</p>
           </div>
-          <div className="flex items-center gap-1 shrink-0">
-            {isAuthor ? (
-              <button
-                onClick={() => onDelete(note._id)}
-                className="p-1.5 rounded-lg text-text-muted hover:text-danger hover:bg-danger-bg transition-all opacity-0 group-hover:opacity-100"
-                aria-label="Delete post"
-              >
-                <FiTrash2 className="h-3.5 w-3.5" />
-              </button>
-            ) : (
-              <>
-                {note.isFriend && (
-                  <span className="flex items-center gap-1 px-2 py-1 text-[10px] text-text-muted bg-dark-350/50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
-                    <FiUserCheck className="h-2.5 w-2.5" /> Friends
-                  </span>
-                )}
-                <button
-                  onClick={() => setShowReportModal(true)}
-                  className="p-1.5 rounded-lg text-text-muted hover:text-danger hover:bg-danger-bg transition-all opacity-0 group-hover:opacity-100"
-                  aria-label="Report post"
-                >
-                  <FiFlag className="h-3.5 w-3.5" />
-                </button>
-              </>
+          <div className="flex items-center gap-2 shrink-0">
+            {note.isFriend && (
+              <span className="flex items-center gap-1 px-2 py-1 text-[10px] text-text-muted bg-dark-350/50 rounded-lg">
+                <FiUserCheck className="h-2.5 w-2.5" /> Friends
+              </span>
             )}
+            <div className="relative" ref={menuRef}>
+              <button
+                onClick={() => setShowMenu(!showMenu)}
+                className="p-1.5 rounded-lg text-text-muted hover:text-text-primary hover:bg-dark-350/60 transition-all"
+                aria-label="More options"
+              >
+                <FiMoreHorizontal className="h-4 w-4" />
+              </button>
+              {showMenu && (
+                <div className="absolute right-0 top-full mt-1 w-36 bg-dark-150/95 backdrop-blur-xl border border-border-light rounded-xl shadow-2xl py-1 z-50">
+                  {isAuthor ? (
+                    <button
+                      onClick={() => { setShowMenu(false); onDelete(note._id) }}
+                      className="w-full flex items-center gap-2 px-3 py-2 text-sm text-danger hover:bg-danger/10 transition-colors"
+                    >
+                      <FiTrash2 className="h-4 w-4" /> Delete
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => { setShowMenu(false); setShowReportModal(true) }}
+                      className="w-full flex items-center gap-2 px-3 py-2 text-sm text-text-primary hover:bg-dark-350/60 transition-colors"
+                    >
+                      <FiFlag className="h-4 w-4" /> Report
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
