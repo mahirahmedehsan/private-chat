@@ -37,7 +37,7 @@ function EmojiPicker({ emojis, myReactions, onSelect, align = 'left' }) {
       initial={{ opacity: 0, scale: 0.9, y: 8 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.9, y: 8 }}
-      className={`absolute bottom-full mb-2 z-20 bg-dark-150 border border-border-light rounded-2xl shadow-2xl p-1.5 flex gap-0.5 ${align === 'right' ? 'right-0' : 'left-0'}`}
+      className={`absolute bottom-full mb-2 z-20 bg-dark-150/95 backdrop-blur-xl border border-border-light rounded-2xl shadow-2xl p-1.5 flex gap-0.5 ${align === 'right' ? 'right-0' : 'left-0'}`}
     >
       {emojis.map((emoji) => (
         <button
@@ -91,7 +91,7 @@ function PostCard({ note, currentUserId, onReact, onComment, onDelete, onDeleteC
       exit={{ opacity: 0, y: -12 }}
       transition={{ type: 'spring', damping: 25, stiffness: 250 }}
     >
-      <div className="bg-dark-150 border border-border rounded-2xl overflow-hidden hover:border-border-light transition-colors card-shadow">
+      <div className="bg-dark-150/70 backdrop-blur-sm border border-border rounded-2xl overflow-hidden hover:border-border-light hover:shadow-lg hover:shadow-black/10 transition-all duration-200 shadow-card post-card">
 
         <div className="flex items-start gap-3 px-4 pt-4">
           <button type="button" onClick={() => navigate(`/profile/${note.author?.uid}`)} className="shrink-0">
@@ -123,6 +123,7 @@ function PostCard({ note, currentUserId, onReact, onComment, onDelete, onDeleteC
               <button
                 onClick={() => onDelete(note._id)}
                 className="p-1.5 rounded-lg text-text-muted hover:text-danger hover:bg-danger-bg transition-all opacity-0 group-hover:opacity-100"
+                aria-label="Delete post"
               >
                 <FiTrash2 className="h-3.5 w-3.5" />
               </button>
@@ -180,7 +181,7 @@ function PostCard({ note, currentUserId, onReact, onComment, onDelete, onDeleteC
             <button
               onClick={() => setShowNotePicker(!showNotePicker)}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                showNotePicker ? 'bg-accent-bg text-accent-light' : 'text-text-muted hover:text-text-primary hover:bg-dark-250'
+                showNotePicker ? 'bg-accent-bg text-accent-light' : 'text-text-muted hover:text-text-primary hover:bg-dark-250/50'
               }`}
             >
               <FiSmile className="h-4 w-4" />
@@ -200,7 +201,7 @@ function PostCard({ note, currentUserId, onReact, onComment, onDelete, onDeleteC
           <button
             onClick={() => setShowComments(!showComments)}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-              showComments ? 'bg-accent-bg text-accent-light' : 'text-text-muted hover:text-text-primary hover:bg-dark-250'
+              showComments ? 'bg-accent-bg text-accent-light' : 'text-text-muted hover:text-text-primary hover:bg-dark-250/50'
             }`}
           >
             <FiMessageCircle className="h-4 w-4" />
@@ -304,7 +305,7 @@ function PostCard({ note, currentUserId, onReact, onComment, onDelete, onDeleteC
               </div>
 
               <div className="px-4 pb-4 pt-1">
-                <div className="flex items-center gap-2 bg-dark-250/60 border border-border-light rounded-xl px-3 py-1.5 focus-within:ring-2 focus-within:ring-accent/30 focus-within:border-accent/50 transition-all">
+                <div className="flex items-center gap-2 bg-dark-250/60 border border-border-light rounded-xl px-3 py-1.5 focus-within:ring-2 focus-within:ring-accent/25 focus-within:border-accent/40 transition-all">
                   <input
                     value={commentText}
                     onChange={(e) => setCommentText(e.target.value)}
@@ -315,7 +316,7 @@ function PostCard({ note, currentUserId, onReact, onComment, onDelete, onDeleteC
                       }
                     }}
                     placeholder="Write a comment..."
-                    className="flex-1 bg-transparent text-xs text-text-primary placeholder-text-muted focus:outline-none py-1"
+                    className="flex-1 bg-transparent text-xs text-text-primary placeholder-text-muted/60 focus:outline-none py-1"
                   />
                   <button
                     onClick={handleSubmitComment}
@@ -494,7 +495,7 @@ export default function Feed() {
             newReactions.push({ emoji, count: 1, reactedByMe: true })
           }
         }
-        const newReactionCount = newReactions.reduce((s, r) => s + r, 0)
+        const newReactionCount = newReactions.reduce((s, r) => s + r.count, 0)
         return { ...n, reactions: newReactions, myReactions: newMyReactions, reactionCount: newReactionCount }
       }))
       return prev
@@ -614,8 +615,8 @@ export default function Feed() {
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            className={`bg-dark-150 border rounded-2xl overflow-hidden card-shadow transition-all duration-200 ${
-              focused ? 'border-accent/40 ring-2 ring-accent/10' : 'border-border'
+            className={`bg-dark-150/70 backdrop-blur-sm border rounded-2xl overflow-hidden shadow-card transition-all duration-200 ${
+              focused ? 'border-accent/40 ring-2 ring-accent/10 shadow-lg shadow-accent/5' : 'border-border'
             }`}
           >
             <div className="flex items-start gap-3 p-4 pb-0">
@@ -629,7 +630,7 @@ export default function Feed() {
                   onBlur={() => setFocused(false)}
                   placeholder="What's on your mind?"
                   rows={focused ? 3 : 1}
-                  className="w-full bg-transparent text-sm text-text-primary placeholder-text-muted resize-none focus:outline-none py-2 leading-relaxed transition-all"
+                  className="w-full bg-transparent text-sm text-text-primary placeholder-text-muted/60 resize-none focus:outline-none py-2 leading-relaxed transition-all"
                 />
               </div>
             </div>
@@ -649,7 +650,7 @@ export default function Feed() {
                         <button
                           type="button"
                           onClick={() => removeImage(i)}
-                          className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-danger rounded-full flex items-center justify-center text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                          className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-gradient-to-r from-danger to-red-500 rounded-full flex items-center justify-center text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
                         >
                           <FiX className="h-3 w-3" />
                         </button>
@@ -660,7 +661,7 @@ export default function Feed() {
               )}
             </AnimatePresence>
 
-            <div className="flex items-center justify-between px-4 py-3 border-t border-border">
+            <div className="flex items-center justify-between px-4 py-3 border-t border-border bg-gradient-to-r from-transparent via-dark-200/30 to-transparent">
               <div className="flex items-center gap-1">
                 <button
                   type="button"
@@ -692,7 +693,7 @@ export default function Feed() {
               <button
                 onClick={handleSubmit}
                 disabled={(!newContent.trim() && newImages.length === 0) || createMutation.isPending || uploading}
-                className="flex items-center gap-1.5 px-4 py-1.5 text-xs font-semibold bg-accent text-white rounded-lg hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                className="flex items-center gap-1.5 px-4 py-1.5 text-xs font-semibold bg-gradient-to-r from-accent to-accent-hover text-white rounded-lg hover:from-accent-hover hover:to-accent disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm"
               >
                 {createMutation.isPending || uploading ? (
                   <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -714,7 +715,7 @@ export default function Feed() {
               animate={{ opacity: 1, y: 0 }}
               className="flex flex-col items-center justify-center py-24"
             >
-              <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-accent/10 to-transparent border border-border-light flex items-center justify-center mb-5">
+              <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-accent/10 to-transparent border border-border-light flex items-center justify-center mb-5 shadow-lg shadow-accent/5">
                 <FiCamera className="h-8 w-8 text-accent-light" />
               </div>
               <h3 className="text-lg font-semibold text-text-primary">No posts yet</h3>
@@ -749,7 +750,7 @@ export default function Feed() {
                   animate={{ opacity: 1 }}
                   className="flex flex-col items-center py-12"
                 >
-                  <div className="w-12 h-12 rounded-full bg-accent-bg flex items-center justify-center mb-3 glow-accent">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center mb-3 glow-accent shadow-lg shadow-accent/10">
                     <FiHeart className="h-5 w-5 text-accent-light" />
                   </div>
                   <p className="text-sm font-medium text-text-primary">You're all caught up!</p>
@@ -766,7 +767,7 @@ export default function Feed() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
                 onClick={() => scrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' })}
-                className="fixed bottom-20 right-6 z-30 w-10 h-10 rounded-xl bg-accent text-white shadow-lg shadow-accent/20 flex items-center justify-center hover:bg-accent-hover transition-all"
+                className="fixed bottom-20 right-6 z-30 w-10 h-10 rounded-xl bg-gradient-to-r from-accent to-accent-hover text-white shadow-lg shadow-accent/20 flex items-center justify-center hover:shadow-accent/30 transition-all"
               >
                 <FiChevronDown className="h-5 w-5 rotate-180" />
               </motion.button>

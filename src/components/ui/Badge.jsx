@@ -4,7 +4,7 @@ export default function Badge({ count, variant = 'primary', size = 'sm', classNa
 
   const variantMap = {
     primary: 'bg-accent text-white',
-    danger: 'bg-danger text-white',
+    danger: 'bg-gradient-to-r from-danger to-red-500 text-white',
     warning: 'bg-warning text-black',
     success: 'bg-success text-white',
     muted: 'bg-dark-600 text-text-secondary',
@@ -20,6 +20,7 @@ export default function Badge({ count, variant = 'primary', size = 'sm', classNa
     <span
       className={`
         inline-flex items-center justify-center rounded-full font-semibold
+        shadow-lg ${variant === 'danger' ? 'shadow-danger/20' : 'shadow-accent/15'}
         ${variantMap[variant]}
         ${sizeMap[size]}
         ${className}

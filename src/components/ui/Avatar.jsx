@@ -4,10 +4,10 @@ export default function Avatar({ src, name, size = 'md', status, className = '' 
   const [error, setError] = useState(false)
 
   const sizeMap = {
-    xs: 'w-6 h-6 text-xs',
-    sm: 'w-8 h-8 text-sm',
-    md: 'w-10 h-10 text-base',
-    lg: 'w-14 h-14 text-xl',
+    xs: 'w-6 h-6 text-[10px]',
+    sm: 'w-8 h-8 text-xs',
+    md: 'w-10 h-10 text-sm',
+    lg: 'w-14 h-14 text-lg',
     xl: 'w-20 h-20 text-2xl',
     '2xl': 'w-28 h-28 text-4xl',
   }
@@ -22,12 +22,7 @@ export default function Avatar({ src, name, size = 'md', status, className = '' 
   }
 
   const initials = name
-    ? name
-        .split(' ')
-        .map((n) => n[0])
-        .join('')
-        .toUpperCase()
-        .slice(0, 2)
+    ? name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2)
     : '?'
 
   return (
@@ -38,11 +33,11 @@ export default function Avatar({ src, name, size = 'md', status, className = '' 
           alt={name || 'Avatar'}
           loading="lazy"
           onError={() => setError(true)}
-          className={`${sizeMap[size]} rounded-full object-cover bg-dark-500`}
+          className={`${sizeMap[size]} rounded-full object-cover bg-dark-500 ring-2 ring-dark-300/60`}
         />
       ) : (
         <div
-          className={`${sizeMap[size]} rounded-full bg-accent/20 flex items-center justify-center font-semibold text-accent-light`}
+          className={`${sizeMap[size]} rounded-full bg-gradient-to-br from-accent/40 to-accent/5 flex items-center justify-center font-semibold text-accent-light ring-2 ring-dark-300/60`}
         >
           {initials}
         </div>
@@ -50,15 +45,14 @@ export default function Avatar({ src, name, size = 'md', status, className = '' 
       {status && (
         <span
           className={`
-            absolute bottom-0 right-0 rounded-full
+            absolute bottom-0 right-0 rounded-full ring-2 ring-dark-200
             ${statusSizeMap[size]}
             ${status === 'online'
-              ? 'bg-success status-online'
+              ? 'bg-success shadow-sm shadow-success/40'
               : status === 'away'
                 ? 'bg-warning'
                 : 'bg-dark-600'
             }
-            ${status === 'online' ? '' : 'border-dark-300'}
           `}
         />
       )}

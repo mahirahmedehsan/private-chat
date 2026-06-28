@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { FiMail, FiLock, FiUser, FiMessageSquare } from 'react-icons/fi'
+import { FiMail, FiLock, FiUser, FiMessageSquare, FiEye, FiEyeOff } from 'react-icons/fi'
 import { FcGoogle } from 'react-icons/fc'
 import {
   signInWithPopup,
@@ -24,6 +24,7 @@ export default function Signup() {
 
   const [form, setForm] = useState({ email: '', password: '', name: '' })
   const [errors, setErrors] = useState({})
+  const [showPassword, setShowPassword] = useState(false)
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value })
@@ -70,27 +71,31 @@ export default function Signup() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-dark-50 p-4 relative overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(99,102,241,0.08),transparent_60%)] pointer-events-none" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(59,130,246,0.06),transparent_60%)] pointer-events-none" />
-      <div className="absolute top-1/4 -left-32 w-64 h-64 bg-accent/3 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 -right-32 w-64 h-64 bg-blue-500/3 rounded-full blur-3xl pointer-events-none" />
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden gradient-auth">
+      <div className="absolute top-1/3 -left-48 w-[500px] h-[500px] bg-accent/5 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-1/3 -right-48 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-accent/[0.015] rounded-full blur-3xl pointer-events-none" />
 
       <motion.div
-        initial={{ opacity: 0, y: 16 }}
+        initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         className="w-full max-w-sm relative"
       >
         <div className="text-center mb-8">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-accent to-blue-500 flex items-center justify-center mx-auto mb-5 shadow-xl shadow-accent/20">
-            <FiMessageSquare className="h-7 w-7 text-white" />
-          </div>
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: 'spring', damping: 14, stiffness: 280, delay: 0.1 }}
+            className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent via-accent-hover to-blue-500 flex items-center justify-center mx-auto mb-5 shadow-2xl shadow-accent/25"
+          >
+            <FiMessageSquare className="h-8 w-8 text-white" />
+          </motion.div>
           <h1 className="text-2xl font-bold gradient-text tracking-tight">Create account</h1>
           <p className="text-text-secondary mt-2 text-sm">Join PrivateChat today</p>
         </div>
 
-        <div className="bg-dark-150 border border-border rounded-2xl p-6 card-shadow space-y-5">
+        <div className="bg-dark-150/70 backdrop-blur-2xl border border-border/60 rounded-2xl p-6 shadow-elevated space-y-5">
           <form onSubmit={handleEmailSignup} className="space-y-4">
             <Input
               label="Display Name"
@@ -112,16 +117,26 @@ export default function Signup() {
               onChange={handleChange}
               error={errors.email}
             />
-            <Input
-              label="Password"
-              type="password"
-              name="password"
-              placeholder="Create a password"
-              icon={FiLock}
-              value={form.password}
-              onChange={handleChange}
-              error={errors.password}
-            />
+            <div className="relative">
+              <Input
+                label="Password"
+                type={showPassword ? 'text' : 'password'}
+                name="password"
+                placeholder="Create a password"
+                icon={FiLock}
+                value={form.password}
+                onChange={handleChange}
+                error={errors.password}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-[34px] text-text-muted hover:text-text-primary transition-colors"
+                tabIndex={-1}
+              >
+                {showPassword ? <FiEyeOff className="h-4 w-4" /> : <FiEye className="h-4 w-4" />}
+              </button>
+            </div>
             <Button type="submit" variant="gradient" size="lg" className="w-full" loading={loading}>
               Create Account
             </Button>
@@ -129,7 +144,7 @@ export default function Signup() {
 
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-border" />
+              <div className="w-full border-t border-border/60" />
             </div>
             <div className="relative flex justify-center text-xs">
               <span className="px-3 bg-dark-150 text-text-muted">or continue with</span>

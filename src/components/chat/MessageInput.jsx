@@ -112,7 +112,7 @@ export default function MessageInput({ onSend, onTyping, disabled }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="px-4 pb-4 pt-1 relative">
+    <form onSubmit={handleSubmit} className="px-4 pb-4 pt-2 relative">
       <AnimatePresence>
         {showPicker && (
           <motion.div
@@ -120,7 +120,7 @@ export default function MessageInput({ onSend, onTyping, disabled }) {
             initial={{ opacity: 0, y: 10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
-            className="absolute bottom-full left-4 right-4 mb-2 bg-dark-200/95 backdrop-blur-md border border-border-light rounded-2xl p-3 shadow-2xl z-20"
+            className="absolute bottom-full left-4 right-4 mb-2 bg-dark-200/95 backdrop-blur-2xl border border-border-light rounded-2xl p-3 shadow-2xl z-20"
           >
             <div className="flex flex-wrap gap-1 max-h-[200px] overflow-y-auto">
               {emojis.map((emoji) => (
@@ -149,17 +149,18 @@ export default function MessageInput({ onSend, onTyping, disabled }) {
             )}
             <span className="text-xs text-text-primary truncate">{file.name}</span>
           </div>
-          <button type="button" onClick={() => setFile(null)} className="p-1.5 rounded-lg text-text-muted hover:text-text-primary hover:bg-dark-400/60 transition-all shrink-0">
+          <button type="button" onClick={() => setFile(null)} className="p-1.5 rounded-lg text-text-muted hover:text-text-primary hover:bg-dark-400/60 transition-all shrink-0" aria-label="Remove file">
             <FiX className="h-4 w-4" />
           </button>
         </div>
       )}
-      <div className="flex items-end gap-2 bg-dark-350/80 backdrop-blur-sm border border-border-light rounded-2xl px-4 py-2.5 focus-within:ring-2 focus-within:ring-accent/30 focus-within:border-accent/50 transition-all duration-150 shadow-sm">
+      <div className="flex items-end gap-2 bg-dark-350/75 backdrop-blur-sm border border-border-light/80 rounded-2xl px-4 py-2.5 focus-within:ring-2 focus-within:ring-accent/25 focus-within:border-accent/40 transition-all duration-150 shadow-sm">
         <input ref={fileRef} type="file" accept="image/*,application/pdf" onChange={handleFileSelect} className="hidden" />
         <button
           type="button"
           onClick={() => fileRef.current?.click()}
           className="p-1.5 rounded-lg text-text-muted hover:text-text-primary hover:bg-dark-400/60 transition-all shrink-0"
+          aria-label="Attach file"
         >
           <FiPaperclip className="h-[18px] w-[18px] rotate-45" />
         </button>
@@ -167,6 +168,7 @@ export default function MessageInput({ onSend, onTyping, disabled }) {
           type="button"
           onClick={() => setShowPicker(!showPicker)}
           className={`p-1.5 rounded-lg transition-all shrink-0 ${showPicker ? 'text-accent bg-accent/10' : 'text-text-muted hover:text-text-primary hover:bg-dark-400/60'}`}
+          aria-label="Toggle emoji picker"
         >
           <FiSmile className="h-[18px] w-[18px]" />
         </button>
@@ -178,12 +180,14 @@ export default function MessageInput({ onSend, onTyping, disabled }) {
           placeholder="Message..."
           rows={1}
           disabled={disabled}
-          className="flex-1 bg-transparent text-text-primary placeholder-text-muted resize-none text-sm py-1.5 max-h-[120px] focus:outline-none"
+          aria-label="Type a message"
+          className="flex-1 bg-transparent text-text-primary placeholder-text-muted/60 resize-none text-sm py-1.5 max-h-[120px] focus:outline-none"
         />
         <button
           type="submit"
           disabled={(!text.trim() && !file) || disabled || uploading}
-          className="p-2 rounded-xl bg-accent text-white hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed transition-all shrink-0 shadow-sm"
+          className="p-2.5 rounded-xl bg-gradient-to-r from-accent to-accent-hover text-white hover:from-accent-hover hover:to-accent disabled:opacity-40 disabled:cursor-not-allowed transition-all shrink-0 shadow-sm hover:shadow-md hover:shadow-accent/20"
+          aria-label="Send message"
         >
           {uploading ? (
             <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />

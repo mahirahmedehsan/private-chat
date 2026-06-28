@@ -41,7 +41,7 @@ export default function ConversationItem({ conversation, isActive, onClick }) {
         w-full flex items-center gap-3 px-4 py-3.5 transition-all duration-200 text-left
         ${isActive
           ? 'bg-dark-300/70 border-l-[3px] border-accent'
-          : 'bg-transparent border-l-[3px] border-transparent hover:bg-dark-250/50'
+          : 'bg-transparent border-l-[3px] border-transparent hover:bg-dark-250/40'
         }
       `}
     >
@@ -53,7 +53,7 @@ export default function ConversationItem({ conversation, isActive, onClick }) {
           <span className={`font-semibold text-sm truncate ${isActive ? 'text-accent-light' : 'text-text-primary'}`}>
             {user?.displayName || 'Unknown'}
           </span>
-          <span className="text-[11px] text-text-muted shrink-0 font-mono">
+          <span className="text-[11px] text-text-muted shrink-0">
             {timeAgo(lastActivity || lastMessage?.createdAt)}
           </span>
         </div>
@@ -73,7 +73,7 @@ export default function ConversationItem({ conversation, isActive, onClick }) {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: 'spring', damping: 15, stiffness: 300 }}
-              className="shrink-0 min-w-[22px] h-[22px] rounded-full bg-accent text-white text-[11px] font-bold flex items-center justify-center px-1.5 shadow-lg shadow-accent/30"
+              className="shrink-0 min-w-[22px] h-[22px] rounded-full bg-gradient-to-r from-accent to-accent-hover text-white text-[11px] font-bold flex items-center justify-center px-1.5 shadow-lg shadow-accent/30"
             >
               {unreadCount > 99 ? '99+' : unreadCount}
             </motion.span>

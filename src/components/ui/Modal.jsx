@@ -1,16 +1,27 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FiX } from 'react-icons/fi'
 
 export default function Modal({ isOpen, onClose, title, children, size = 'md' }) {
+  const previousFocusRef = useRef(null)
+
   useEffect(() => {
     if (isOpen) {
+      previousFocusRef.current = document.activeElement
       document.body.style.overflow = 'hidden'
     } else {
       document.body.style.overflow = ''
+      previousFocusRef.current?.focus()
     }
     return () => { document.body.style.overflow = '' }
   }, [isOpen])
+
+  useEffect(() => {
+    if (!isOpen) return
+    const handleEscape = (e) => { if (e.key === 'Escape') onClose() }
+    document.addEventListener('keydown', handleEscape)
+    return () => document.removeEventListener('keydown', handleEscape)
+  }, [isOpen, onClose])
 
   const sizeMap = {
     sm: 'max-w-sm',
@@ -23,7 +34,7 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md' })
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-label={title}>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -33,18 +44,19 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md' })
             onClick={onClose}
           />
           <motion.div
-            initial={{ opacity: 0, scale: 0.96, y: 8 }}
+            initial={{ opacity: 0, scale: 0.94, y: 12 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.96, y: 8 }}
-            transition={{ type: 'spring', damping: 28, stiffness: 320, mass: 0.8 }}
-            className={`relative w-full ${sizeMap[size]} bg-dark-200 rounded-2xl border border-border-light shadow-2xl`}
+            exit={{ opacity: 0, scale: 0.94, y: 12 }}
+            transition={{ type: 'spring', damping: 26, stiffness: 300, mass: 0.8 }}
+            className={`relative w-full ${sizeMap[size]} bg-dark-200 rounded-2xl border border-border-light shadow-2xl overflow-hidden`}
           >
             {title && (
               <div className="flex items-center justify-between px-6 py-4 border-b border-border">
-                <h2 className="text-lg font-semibold text-text-primary">{title}</h2>
+                <h2 className="text-base font-semibold text-text-primary">{title}</h2>
                 <button
                   onClick={onClose}
                   className="p-1.5 rounded-lg text-text-muted hover:text-text-primary hover:bg-dark-350 transition-colors"
+                  aria-label="Close modal"
                 >
                   <FiX className="h-4 w-4" />
                 </button>

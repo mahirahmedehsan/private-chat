@@ -12,30 +12,10 @@ const icons = {
 }
 
 const config = {
-  success: {
-    border: 'border-success/25',
-    bg: 'bg-success/10',
-    iconColor: 'text-success',
-    glow: 'shadow-success/10',
-  },
-  error: {
-    border: 'border-danger/25',
-    bg: 'bg-danger/10',
-    iconColor: 'text-danger',
-    glow: 'shadow-danger/10',
-  },
-  warning: {
-    border: 'border-warning/25',
-    bg: 'bg-warning/10',
-    iconColor: 'text-warning',
-    glow: 'shadow-warning/10',
-  },
-  info: {
-    border: 'border-accent/25',
-    bg: 'bg-accent/10',
-    iconColor: 'text-accent-light',
-    glow: 'shadow-accent/10',
-  },
+  success: { border: 'border-success/25', bg: 'bg-success/10', iconColor: 'text-success', glow: 'shadow-success/10', bar: 'bg-success' },
+  error: { border: 'border-danger/25', bg: 'bg-danger/10', iconColor: 'text-danger', glow: 'shadow-danger/10', bar: 'bg-danger' },
+  warning: { border: 'border-warning/25', bg: 'bg-warning/10', iconColor: 'text-warning', glow: 'shadow-warning/10', bar: 'bg-warning' },
+  info: { border: 'border-accent/25', bg: 'bg-accent/10', iconColor: 'text-accent-light', glow: 'shadow-accent/10', bar: 'bg-accent' },
 }
 
 export default function Toast() {
@@ -81,14 +61,13 @@ function ToastItem({ toast, Icon, onDismiss }) {
       initial={{ opacity: 0, x: 80, scale: 0.95 }}
       animate={{ opacity: 1, x: 0, scale: 1 }}
       exit={{ opacity: 0, x: 80, scale: 0.95 }}
-      transition={{ type: 'spring', damping: 20, stiffness: 300 }}
+      transition={{ type: 'spring', damping: 22, stiffness: 300 }}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
+      role="alert"
       className={`
         pointer-events-auto relative overflow-hidden flex items-start gap-3 p-4 rounded-2xl border
-        bg-dark-200/95 backdrop-blur-xl shadow-xl ${c.glow}
-        ${c.border}
-        card-shadow
+        bg-dark-200/95 backdrop-blur-xl shadow-xl ${c.glow} ${c.border} card-shadow
       `}
     >
       <div className={`w-8 h-8 rounded-xl ${c.bg} flex items-center justify-center shrink-0`}>
@@ -101,11 +80,12 @@ function ToastItem({ toast, Icon, onDismiss }) {
       <button
         onClick={onDismiss}
         className="shrink-0 p-1 rounded-lg text-text-muted hover:text-text-primary hover:bg-dark-350 transition-colors"
+        aria-label="Dismiss notification"
       >
         <FiX className="h-3.5 w-3.5" />
       </button>
       <div
-        className="absolute bottom-0 left-0 h-0.5 bg-accent/40 progress-bar"
+        className={`absolute bottom-0 left-0 h-0.5 ${c.bar}/40 progress-bar`}
         style={{ animationDuration: `${duration}ms`, animationPlayState: paused ? 'paused' : 'running' }}
       />
     </motion.div>

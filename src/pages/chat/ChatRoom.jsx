@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
 import { motion, AnimatePresence } from 'framer-motion'
-import { FiArrowLeft, FiPhone, FiVideo, FiInfo, FiMoreHorizontal, FiX, FiMail, FiCalendar, FiMessageSquare, FiImage, FiFile, FiSend, FiBell, FiUserX, FiUserCheck, FiSlash, FiBellOff, FiClock, FiLock, FiPlus } from 'react-icons/fi'
+import { FiArrowLeft, FiPhone, FiVideo, FiInfo, FiMoreHorizontal, FiX, FiMail, FiCalendar, FiMessageSquare, FiSend, FiImage, FiFile, FiBell, FiUserX, FiUserCheck, FiSlash, FiBellOff, FiClock, FiLock, FiPlus } from 'react-icons/fi'
 import { getMessages, sendMessage as apiSendMessage, editMessage as apiEditMessage, deleteMessage as apiDeleteMessage, toggleReaction } from '../../api/messages'
 import { getUser } from '../../api/users'
 import { removeFriend, blockUser, unblockUser, getFriendStatus } from '../../api/friends'
@@ -358,46 +358,42 @@ export default function ChatRoom() {
 
   if (!conversation) {
     return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="flex-1 flex flex-col items-center justify-center py-16 px-4 text-center"
-      >
-        <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-accent/5 to-transparent border border-border-light flex items-center justify-center mb-5">
-          <FiMessageSquare className="h-9 w-9 text-accent-light" />
-        </div>
-        <h3 className="text-lg font-semibold text-text-primary mb-1">Select a conversation</h3>
-        <p className="text-text-secondary text-sm max-w-xs">Choose a chat from the sidebar or start a new one</p>
-      </motion.div>
+      <EmptyChat
+        title="Select a conversation"
+        subtitle="Choose a chat from the sidebar or start a new one"
+      />
     )
   }
 
   return (
-    <div className="flex-1 flex flex-col h-full">
-      <header className="h-14 min-h-[56px] bg-dark-100/80 backdrop-blur-md border-b border-border flex items-center justify-between px-4 gap-3">
+    <div className="flex-1 flex flex-col h-full relative">
+      <header className="h-14 min-h-[56px] bg-dark-100/70 backdrop-blur-xl border-b border-border flex items-center justify-between px-4 gap-3">
         <div className="flex items-center gap-3 min-w-0">
           <button
             onClick={() => navigate('/chat')}
-            className="p-2 rounded-xl text-text-muted hover:text-text-primary hover:bg-dark-300 transition-all"
+            className="p-2 rounded-xl text-text-muted hover:text-text-primary hover:bg-dark-300/60 transition-all"
+            aria-label="Back to chats"
           >
             <FiArrowLeft className="h-5 w-5" />
           </button>
           <button
             onClick={() => navigate(`/profile/${otherUser?.uid}`)}
-            className="flex items-center gap-3 min-w-0 text-left"
+            className="flex items-center gap-3 min-w-0 text-left group"
           >
             <Avatar src={otherUser?.photoURL} name={otherUser?.displayName} size="md" status={otherStatus} />
             <div className="min-w-0">
-              <h2 className="text-sm font-semibold text-text-primary truncate">
+              <h2 className="text-sm font-semibold text-text-primary truncate group-hover:text-accent-light transition-colors">
                 {otherUser?.displayName || 'User'}
               </h2>
-              <p className="text-xs text-text-muted capitalize">{otherStatus}</p>
+              <p className="text-xs capitalize" style={{ color: otherStatus === 'online' ? 'var(--color-success)' : 'var(--color-text-muted)' }}>
+                {otherStatus}
+              </p>
             </div>
           </button>
         </div>
         <div className="flex items-center gap-1">
           {e2eeEnabled && (
-            <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-accent/10 text-accent-light text-[10px] font-medium" title="End-to-end encrypted">
+            <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-accent/10 text-accent-light text-[10px] font-medium shadow-sm" title="End-to-end encrypted">
               <FiLock className="h-3 w-3" />
               <span className="hide-mobile">E2EE</span>
             </div>
@@ -407,29 +403,31 @@ export default function ChatRoom() {
               dispatch(setActiveSection('notifications'))
               navigate('/notifications')
             }}
-            className="relative p-2 rounded-xl text-text-muted hover:text-text-primary hover:bg-dark-300 transition-all"
-            title="Notifications"
+            className="relative p-2 rounded-xl text-text-muted hover:text-text-primary hover:bg-dark-300/60 transition-all"
+            aria-label="Notifications"
           >
             <FiBell className="h-4 w-4" />
             {notificationUnreadCount > 0 && (
               <Badge count={notificationUnreadCount} size="xs" className="absolute -top-0.5 -right-0.5" />
             )}
           </button>
-          <button className="p-2 rounded-xl text-text-muted hover:text-text-primary hover:bg-dark-300 transition-all">
+          <button className="p-2 rounded-xl text-text-muted hover:text-text-primary hover:bg-dark-300/60 transition-all" aria-label="Voice call">
             <FiPhone className="h-4 w-4" />
           </button>
-          <button className="p-2 rounded-xl text-text-muted hover:text-text-primary hover:bg-dark-300 transition-all">
+          <button className="p-2 rounded-xl text-text-muted hover:text-text-primary hover:bg-dark-300/60 transition-all" aria-label="Video call">
             <FiVideo className="h-4 w-4" />
           </button>
           <button
             onClick={() => setShowInfo(!showInfo)}
-            className={`p-2 rounded-xl transition-all ${showInfo ? 'bg-accent/15 text-accent-light' : 'text-text-muted hover:text-text-primary hover:bg-dark-300'}`}
+            className={`p-2 rounded-xl transition-all ${showInfo ? 'bg-accent/15 text-accent-light shadow-sm' : 'text-text-muted hover:text-text-primary hover:bg-dark-300/60'}`}
+            aria-label="Chat info"
           >
             <FiInfo className="h-4 w-4" />
           </button>
           <button
             onClick={() => setShowMenu(true)}
-            className="p-2 rounded-xl transition-all text-text-muted hover:text-text-primary hover:bg-dark-300"
+            className="p-2 rounded-xl transition-all text-text-muted hover:text-text-primary hover:bg-dark-300/60"
+            aria-label="More options"
           >
             <FiMoreHorizontal className="h-4 w-4" />
           </button>
@@ -451,7 +449,7 @@ export default function ChatRoom() {
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
               onClick={(e) => e.stopPropagation()}
-              className="absolute right-0 top-0 bottom-0 w-72 bg-dark-150/95 backdrop-blur-xl border-l border-border-light shadow-2xl flex flex-col"
+              className="absolute right-0 top-0 bottom-0 w-72 bg-dark-150/95 backdrop-blur-2xl border-l border-border-light shadow-2xl flex flex-col"
             >
               <div className="flex items-center justify-between px-5 py-4 border-b border-border">
                 <h3 className="text-sm font-semibold text-text-primary">Options</h3>
@@ -574,7 +572,7 @@ export default function ChatRoom() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={() => setShowInfo(false)}
-          className="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50"
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.92 }}
@@ -584,10 +582,14 @@ export default function ChatRoom() {
             onClick={(e) => e.stopPropagation()}
             className="bg-dark-200/95 backdrop-blur-md border border-border-light rounded-2xl p-6 w-[90%] max-w-sm flex flex-col items-center gap-3 shadow-2xl"
           >
-            <Avatar src={otherUserProfile.photoURL} name={otherUserProfile.displayName} size="xl" status={otherStatus} />
+            <div className="relative">
+              <Avatar src={otherUserProfile.photoURL} name={otherUserProfile.displayName} size="xl" status={otherStatus} />
+            </div>
             <div className="text-center">
               <h3 className="text-lg font-semibold text-text-primary">{otherUserProfile.displayName}</h3>
-              <p className="text-sm text-text-muted capitalize">{otherStatus}</p>
+              <p className="text-sm" style={{ color: otherStatus === 'online' ? 'var(--color-success)' : 'var(--color-text-muted)' }}>
+                {otherStatus}
+              </p>
             </div>
             <div className="w-full space-y-2 mt-2">
               <div className="flex items-center gap-3 px-4 py-2.5 bg-dark-350/60 backdrop-blur-sm rounded-xl border border-border-light">
@@ -600,7 +602,7 @@ export default function ChatRoom() {
               </div>
             </div>
             {e2eeEnabled && (
-              <div className="flex items-center gap-2 px-4 py-2 bg-accent/10 rounded-xl border border-accent/20 w-full">
+              <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-accent/10 to-accent/5 rounded-xl border border-accent/20 w-full">
                 <FiLock className="h-4 w-4 text-accent-light shrink-0" />
                 <span className="text-xs text-accent-light">Messages are end-to-end encrypted</span>
               </div>
@@ -608,6 +610,7 @@ export default function ChatRoom() {
             <button
               onClick={() => setShowInfo(false)}
               className="mt-2 w-9 h-9 rounded-xl flex items-center justify-center text-text-muted hover:text-text-primary hover:bg-dark-350/60 transition-all"
+              aria-label="Close info"
             >
               <FiX className="h-5 w-5" />
             </button>
@@ -618,7 +621,7 @@ export default function ChatRoom() {
       <div
         ref={scrollContainerRef}
         onScroll={handleScroll}
-        className="flex-1 overflow-y-auto py-3 scrollbar-gutter"
+        className="flex-1 overflow-y-auto scrollbar-gutter"
       >
         {isLoading ? (
           <div className="space-y-2 px-4">
@@ -666,7 +669,7 @@ export default function ChatRoom() {
                 animate={{ opacity: 1, y: 0 }}
                 className="flex flex-col items-center justify-center py-16 px-4 text-center"
               >
-                <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-accent/5 to-transparent border border-border-light flex items-center justify-center mb-5">
+                <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-accent/5 to-transparent border border-border-light flex items-center justify-center mb-5 shadow-lg shadow-accent/5">
                   <FiMessageSquare className="h-9 w-9 text-accent-light" />
                 </div>
                 <h3 className="text-lg font-semibold text-text-primary mb-2">Start a conversation</h3>
@@ -715,7 +718,7 @@ export default function ChatRoom() {
       )}
 
       {friendStatusData?.blockedByMe && (
-        <div className="px-4 py-3 bg-danger/5 backdrop-blur-sm border-t border-border border-danger/10">
+        <div className="px-4 py-3 bg-gradient-to-r from-danger/5 to-transparent backdrop-blur-sm border-t border-border border-danger/10">
           <div className="flex items-center justify-center gap-2">
             <FiSlash className="h-4 w-4 text-danger shrink-0" />
             <p className="text-sm text-text-muted">
@@ -725,7 +728,7 @@ export default function ChatRoom() {
         </div>
       )}
       {friendStatusData?.blockedByThem && (
-        <div className="px-4 py-3 bg-warning/5 backdrop-blur-sm border-t border-border border-warning/10">
+        <div className="px-4 py-3 bg-gradient-to-r from-warning/5 to-transparent backdrop-blur-sm border-t border-border border-warning/10">
           <div className="flex items-center justify-center gap-2">
             <FiSlash className="h-4 w-4 text-warning shrink-0" />
             <p className="text-sm text-text-muted">

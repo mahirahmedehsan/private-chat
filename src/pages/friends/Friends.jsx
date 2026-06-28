@@ -86,7 +86,7 @@ function FriendCard({ friend, onlineUsers, activeTab, onRespond, onRemove, onBlo
       exit={{ opacity: 0, x: -20 }}
       transition={{ type: 'spring', damping: 25, stiffness: 250 }}
     >
-      <div className="group relative flex items-center gap-3 px-4 py-3.5 bg-dark-150 border border-border rounded-xl hover:bg-dark-200 hover:border-accent/20 hover:shadow-lg hover:shadow-accent/5 transition-all duration-200 mb-2 card-shadow">
+      <div className="group relative flex items-center gap-3 px-4 py-3.5 bg-dark-150/70 backdrop-blur-sm border border-border rounded-2xl hover:bg-dark-200/80 hover:border-accent/20 hover:shadow-lg hover:shadow-accent/5 transition-all duration-200 mb-2 shadow-card">
         <button type="button" onClick={() => navigate(`/profile/${friend.uid}`)} className="shrink-0">
           <Avatar src={friend.photoURL} name={friend.displayName} size="md" status={isOnline ? 'online' : undefined} />
         </button>
@@ -193,7 +193,7 @@ function FriendCard({ friend, onlineUsers, activeTab, onRespond, onRemove, onBlo
                 <FiSlash className="h-4 w-4" />
               </button>
               {blockOpen && (
-                <div className="absolute right-0 top-full mt-1.5 w-44 bg-dark-150 border border-border-light rounded-xl shadow-2xl py-1.5 z-50">
+                <div className="absolute right-0 top-full mt-1.5 w-44 bg-dark-150/95 backdrop-blur-xl border border-border-light rounded-xl shadow-2xl py-1.5 z-50">
                   <div className="px-3 pb-1.5 mb-1 border-b border-border">
                     <p className="text-[11px] font-semibold text-text-muted uppercase tracking-wider">Block duration</p>
                   </div>
@@ -385,7 +385,7 @@ export default function Friends() {
         {activeTab === 'all' && (
           <button
             onClick={() => setShowAddModal(true)}
-            className="w-9 h-9 rounded-lg flex items-center justify-center text-text-muted hover:text-text-primary hover:bg-dark-300 transition-all"
+            className="w-9 h-9 rounded-lg flex items-center justify-center text-text-muted hover:text-text-primary hover:bg-dark-300/60 transition-all"
             title="Add Friend"
           >
             <FiUserPlus className="h-5 w-5" />
@@ -432,7 +432,7 @@ export default function Friends() {
           {isLoading ? (
             <div className="space-y-2">
               {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="flex items-center gap-3 p-4 bg-dark-150 border border-border rounded-xl">
+                <div key={i} className="flex items-center gap-3 p-4 bg-dark-150/70 border border-border rounded-xl">
                   <Skeleton className="w-10 h-10 rounded-full" />
                   <div className="flex-1 space-y-2">
                     <Skeleton className="h-4 w-32" />
@@ -465,13 +465,13 @@ export default function Friends() {
       <Modal isOpen={showAddModal} onClose={() => { setShowAddModal(false); setUserSearch(''); setDebouncedSearch('') }} title="Add Friend" size="lg">
         <div className="space-y-3">
           <div className="relative">
-            <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-text-muted" />
+            <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-text-muted pointer-events-none" />
             <input
               placeholder="Search by name or email..."
               value={userSearch}
               onChange={(e) => setUserSearch(e.target.value)}
               autoFocus
-              className="w-full bg-dark-350/80 border border-border-light rounded-xl pl-10 pr-4 py-2.5 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent/50 transition-all"
+              className="w-full bg-dark-350/70 border border-border-light rounded-xl pl-10 pr-4 py-2.5 text-sm text-text-primary placeholder-text-muted/60 focus:outline-none focus:ring-2 focus:ring-accent/25 focus:border-accent/40 transition-all"
             />
           </div>
 

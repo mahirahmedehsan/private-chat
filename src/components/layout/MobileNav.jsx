@@ -32,7 +32,7 @@ export default function MobileNav() {
   useKeyboardNav(navItems, activeId, handleNav)
 
   return (
-    <nav className="hide-desktop fixed bottom-0 left-0 right-0 z-40 bg-dark-150/90 backdrop-blur-xl border-t border-border safe-area-bottom">
+    <nav className="hide-desktop fixed bottom-0 left-0 right-0 z-40 bg-dark-150/85 backdrop-blur-2xl border-t border-border safe-area-bottom" aria-label="Mobile navigation">
       <div className="flex items-center justify-around h-14 max-w-lg mx-auto px-2">
         {navItems.map((item) => {
           const isActive = activeId === item.id
@@ -42,13 +42,15 @@ export default function MobileNav() {
             <button
               key={item.id}
               onClick={() => handleNav(item)}
+              aria-label={item.label}
+              aria-current={isActive ? 'page' : undefined}
               className="relative flex flex-col items-center justify-center flex-1 h-full min-w-0 px-1"
             >
               {isActive && (
                 <motion.span
                   layoutId="mobile-active-tab"
                   transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-                  className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-accent rounded-full"
+                  className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-gradient-to-r from-accent to-accent-light rounded-full"
                 />
               )}
               <motion.div
@@ -68,7 +70,7 @@ export default function MobileNav() {
                 {t(`nav.${item.id}`)}
               </span>
               {item.id === 'chat' && unreadTotal > 0 && (
-                <span className="absolute top-0.5 right-1/4 min-w-[15px] h-[15px] px-1 flex items-center justify-center rounded-full bg-danger text-[8px] font-bold text-white leading-none shadow-lg shadow-danger/30">
+                <span className="absolute top-0.5 right-1/4 min-w-[15px] h-[15px] px-1 flex items-center justify-center rounded-full bg-gradient-to-r from-danger to-red-500 text-[8px] font-bold text-white leading-none shadow-lg shadow-danger/30">
                   {unreadTotal > 99 ? '99+' : unreadTotal}
                 </span>
               )}

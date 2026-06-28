@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { motion, AnimatePresence } from 'framer-motion'
-import { FiCamera, FiEdit2, FiCheck, FiX, FiLoader, FiFileText, FiHeart, FiUsers, FiGlobe, FiLock, FiMessageCircle, FiEye, FiCalendar, FiMail, FiMapPin, FiTrash2, FiMoreVertical, FiUser } from 'react-icons/fi'
+import { FiCamera, FiEdit2, FiCheck, FiX, FiLoader, FiFileText, FiHeart, FiUsers, FiGlobe, FiLock, FiMessageCircle, FiEye, FiCalendar, FiMail, FiMapPin, FiTrash2, FiMoreVertical, FiUser, FiAtSign } from 'react-icons/fi'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { getMe, updateProfile, getProfileStats } from '../../api/users'
 import { getMyNotes, updateNote, deleteNote, createNote } from '../../api/notes'
@@ -173,8 +173,12 @@ export default function Profile() {
       <TopBar title="Profile" />
       <div className="flex-1 overflow-y-auto scrollbar-gutter">
         <div className="max-w-2xl mx-auto">
-          <div className="relative h-48 bg-gradient-to-br from-accent/30 via-accent/15 to-dark-150">
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(99,102,241,0.12),transparent_70%)]" />
+          <div className="relative h-48 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-accent/30 via-accent/15 via-blue-500/8 to-dark-150" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,oklch(0.623 0.214 259.8 / 0.12),transparent_70%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,oklch(0.546 0.245 262.9 / 0.06),transparent_60%)]" />
+            <div className="absolute top-1/4 -left-16 w-48 h-48 bg-accent/5 rounded-full blur-3xl" />
+            <div className="absolute bottom-0 right-1/4 w-32 h-32 bg-blue-500/5 rounded-full blur-2xl" />
           </div>
 
           <div className="relative px-4 md:px-8 -mt-14 pb-8">
@@ -184,11 +188,11 @@ export default function Profile() {
               className="flex flex-col sm:flex-row sm:items-end gap-4 sm:gap-6 mb-6"
             >
               <div className="relative shrink-0 -ml-1">
-                <Avatar src={user?.photoURL} name={user?.displayName} size="2xl" status="online" />
+                <Avatar src={user?.photoURL} name={user?.displayName} size="2xl" status="online" className="ring-4 ring-dark-150/80" />
                 <button
                   onClick={() => fileInputRef.current?.click()}
                   disabled={uploadingPic}
-                  className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center hover:bg-accent-hover transition-colors shadow-lg disabled:opacity-50"
+                  className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-gradient-to-br from-accent to-accent-light text-white flex items-center justify-center hover:shadow-lg hover:shadow-accent/30 transition-all disabled:opacity-50"
                 >
                   {uploadingPic ? <FiLoader className="h-3.5 w-3.5 animate-spin" /> : <FiCamera className="h-3.5 w-3.5" />}
                 </button>
@@ -198,7 +202,10 @@ export default function Profile() {
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <h1 className="text-xl font-bold text-text-primary truncate">{user?.displayName}</h1>
-                    <p className="text-sm text-text-muted">{user?.email}</p>
+                    <div className="flex items-center gap-1.5 mt-0.5">
+                      <FiAtSign className="h-3 w-3 text-text-muted" />
+                      <p className="text-sm text-text-muted">{user?.email}</p>
+                    </div>
                   </div>
                   <Button
                     variant="ghost"
@@ -219,7 +226,7 @@ export default function Profile() {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
-                className="mb-6 bg-dark-200/80 backdrop-blur-sm rounded-2xl p-5 border border-border card-shadow"
+                className="mb-6 glass-card rounded-2xl p-5 card-shadow"
               >
                 <h3 className="text-xs font-semibold text-text-secondary uppercase tracking-wider mb-4">Edit Profile</h3>
                 <div className="space-y-4">
@@ -283,36 +290,19 @@ export default function Profile() {
             )}
 
             <div className="grid grid-cols-3 gap-3 mb-6">
-              <motion.div
-                whileHover={{ y: -2 }}
-                className="bg-dark-150/60 backdrop-blur-sm rounded-xl p-4 text-center border border-border-light card-shadow hover:border-accent/20 transition-all"
-              >
-                <div className="w-9 h-9 rounded-lg bg-accent-bg flex items-center justify-center mx-auto mb-2">
-                  <FiFileText className="h-4 w-4 text-accent-light" />
-                </div>
-                <p className="text-xl font-bold text-text-primary">{stats?.postCount ?? '-'}</p>
-                <p className="text-[11px] text-text-muted font-medium uppercase tracking-wider">Posts</p>
-              </motion.div>
-              <motion.div
-                whileHover={{ y: -2 }}
-                className="bg-dark-150/60 backdrop-blur-sm rounded-xl p-4 text-center border border-border-light card-shadow hover:border-accent/20 transition-all"
-              >
-                <div className="w-9 h-9 rounded-lg bg-accent-bg flex items-center justify-center mx-auto mb-2">
-                  <FiUsers className="h-4 w-4 text-accent-light" />
-                </div>
-                <p className="text-xl font-bold text-text-primary">{stats?.friendCount ?? '-'}</p>
-                <p className="text-[11px] text-text-muted font-medium uppercase tracking-wider">Friends</p>
-              </motion.div>
-              <motion.div
-                whileHover={{ y: -2 }}
-                className="bg-dark-150/60 backdrop-blur-sm rounded-xl p-4 text-center border border-border-light card-shadow hover:border-accent/20 transition-all"
-              >
-                <div className="w-9 h-9 rounded-lg bg-accent-bg flex items-center justify-center mx-auto mb-2">
-                  <FiHeart className="h-4 w-4 text-accent-light" />
-                </div>
-                <p className="text-xl font-bold text-text-primary">{stats?.totalLikes ?? '-'}</p>
-                <p className="text-[11px] text-text-muted font-medium uppercase tracking-wider">Likes</p>
-              </motion.div>
+              {[{ icon: FiFileText, label: 'Posts', value: stats?.postCount }, { icon: FiUsers, label: 'Friends', value: stats?.friendCount }, { icon: FiHeart, label: 'Likes', value: stats?.totalLikes }].map((item) => (
+                <motion.div
+                  key={item.label}
+                  whileHover={{ y: -2 }}
+                  className="glass-card rounded-xl p-4 text-center hover:border-accent/20 transition-all card-shadow"
+                >
+                  <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-accent/15 to-accent/5 flex items-center justify-center mx-auto mb-2">
+                    <item.icon className="h-4 w-4 text-accent-light" />
+                  </div>
+                  <p className="text-xl font-bold text-text-primary">{item.value ?? '-'}</p>
+                  <p className="text-[11px] text-text-muted font-medium uppercase tracking-wider">{item.label}</p>
+                </motion.div>
+              ))}
             </div>
 
             <div className="flex items-center gap-1 mb-5 border-b border-border">
@@ -337,7 +327,7 @@ export default function Profile() {
                   {activeTab === tab.id && (
                     <motion.div
                       layoutId="tab-indicator"
-                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent rounded-full"
+                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-accent to-accent-light rounded-full"
                     />
                   )}
                 </button>
@@ -351,11 +341,11 @@ export default function Profile() {
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
-                  className="bg-dark-150/40 rounded-2xl p-5 border border-border-light card-shadow space-y-4"
+                  className="glass-card rounded-2xl p-5 card-shadow space-y-4"
                 >
                   <div className="space-y-3">
                     <div className="flex items-center gap-3 px-4 py-3 bg-dark-200/60 rounded-xl border border-border-light">
-                      <div className="w-8 h-8 rounded-lg bg-accent-bg flex items-center justify-center shrink-0">
+                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent/15 to-accent/5 flex items-center justify-center shrink-0">
                         <FiMail className="h-4 w-4 text-accent-light" />
                       </div>
                       <div className="flex-1">
@@ -368,7 +358,7 @@ export default function Profile() {
                     </div>
                     {user?.address && (
                       <div className="flex items-center gap-3 px-4 py-3 bg-dark-200/60 rounded-xl border border-border-light">
-                        <div className="w-8 h-8 rounded-lg bg-accent-bg flex items-center justify-center shrink-0">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent/15 to-accent/5 flex items-center justify-center shrink-0">
                           <FiMapPin className="h-4 w-4 text-accent-light" />
                         </div>
                         <div className="flex-1">
@@ -382,7 +372,7 @@ export default function Profile() {
                     )}
                     {user?.birthday && (
                       <div className="flex items-center gap-3 px-4 py-3 bg-dark-200/60 rounded-xl border border-border-light">
-                        <div className="w-8 h-8 rounded-lg bg-accent-bg flex items-center justify-center shrink-0">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent/15 to-accent/5 flex items-center justify-center shrink-0">
                           <FiCalendar className="h-4 w-4 text-accent-light" />
                         </div>
                         <div className="flex-1">
@@ -398,7 +388,7 @@ export default function Profile() {
                     )}
                     {user?.gender && (
                       <div className="flex items-center gap-3 px-4 py-3 bg-dark-200/60 rounded-xl border border-border-light">
-                        <div className="w-8 h-8 rounded-lg bg-accent-bg flex items-center justify-center shrink-0">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent/15 to-accent/5 flex items-center justify-center shrink-0">
                           <FiUsers className="h-4 w-4 text-accent-light" />
                         </div>
                         <div className="flex-1">
@@ -411,7 +401,7 @@ export default function Profile() {
                       </div>
                     )}
                     <div className="flex items-center gap-3 px-4 py-3 bg-dark-200/60 rounded-xl border border-border-light">
-                      <div className="w-8 h-8 rounded-lg bg-accent-bg flex items-center justify-center shrink-0">
+                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent/15 to-accent/5 flex items-center justify-center shrink-0">
                         <FiCalendar className="h-4 w-4 text-accent-light" />
                       </div>
                       <div>
@@ -422,7 +412,7 @@ export default function Profile() {
                       </div>
                     </div>
                     <div className="flex items-center gap-3 px-4 py-3 bg-dark-200/60 rounded-xl border border-border-light">
-                      <div className="w-8 h-8 rounded-lg bg-accent-bg flex items-center justify-center shrink-0">
+                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent/15 to-accent/5 flex items-center justify-center shrink-0">
                         <FiEye className="h-4 w-4 text-accent-light" />
                       </div>
                       <div className="flex-1">
@@ -453,7 +443,7 @@ export default function Profile() {
                   {myNotesData?.notes?.length > 0 ? (
                     <div className="space-y-3">
                       {myNotesData.notes.map((note) => (
-                        <div key={note._id} className="bg-dark-150/40 rounded-2xl p-4 border border-border-light hover:border-border transition-colors card-shadow">
+                        <div key={note._id} className="glass-card rounded-2xl p-4 hover:border-border transition-all card-shadow">
                           <div className="flex items-start gap-3 mb-2">
                             <Avatar src={user?.photoURL} name={user?.displayName} size="sm" />
                             <div className="flex-1 min-w-0">

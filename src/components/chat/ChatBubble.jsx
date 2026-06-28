@@ -38,7 +38,7 @@ export default function ChatBubble({ message, isOwn, onReact, onEdit, onDelete }
 
   return (
     <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'} mb-1.5 group`}>
-      <div className={`relative max-w-[75%] md:max-w-[60%] ${isOwn ? 'order-1' : 'order-1'}`}>
+      <div className={`relative max-w-[78%] md:max-w-[68%] ${isOwn ? 'order-1' : 'order-1'}`}>
         {editing ? (
           <div className="bg-dark-300/95 backdrop-blur-sm border border-dark-500/80 rounded-2xl p-3 shadow-lg">
             <textarea
@@ -64,15 +64,15 @@ export default function ChatBubble({ message, isOwn, onReact, onEdit, onDelete }
         ) : (
           <div
             className={`
-              relative px-4 py-2.5 rounded-2xl text-sm leading-relaxed break-words
+              relative px-4 py-2.5 text-sm leading-relaxed break-words
               ${isOwn
-                ? 'bg-accent text-white rounded-br-sm shadow-sm shadow-accent/20'
-                : 'bg-dark-350/90 backdrop-blur-sm text-text-primary rounded-bl-sm border border-border-light shadow-sm'
+                ? 'chat-bubble-own text-white rounded-[20px] rounded-br-[6px] shadow-md shadow-accent/20'
+                : 'chat-bubble-other text-text-primary rounded-[20px] rounded-bl-[6px] border border-border-light shadow-sm'
               }
             `}
           >
             {showEncryptedIcon && (
-              <div className={`flex items-center gap-1 mb-1 ${isEncrypted ? 'opacity-60' : 'opacity-40'}`}>
+              <div className={`flex items-center gap-1 mb-1.5 ${isEncrypted ? 'opacity-60' : 'opacity-40'}`}>
                 {isEncrypted ? (
                   <FiLock className="h-3 w-3" />
                 ) : (
@@ -87,7 +87,12 @@ export default function ChatBubble({ message, isOwn, onReact, onEdit, onDelete }
             {message.file && (
               <div className="mb-2">
                 {(message.file.type || message.file.mimetype)?.startsWith('image/') ? (
-                  <img src={message.file.url} alt={message.file.name} className="max-w-full rounded-xl max-h-60 object-cover" />
+                  <img
+                    src={message.file.url}
+                    alt={message.file.name}
+                    className="max-w-full rounded-xl max-h-64 object-cover cursor-pointer hover:opacity-90 transition-opacity"
+                    loading="lazy"
+                  />
                 ) : (
                   <a
                     href={message.file.url}
@@ -103,16 +108,18 @@ export default function ChatBubble({ message, isOwn, onReact, onEdit, onDelete }
             )}
 
             {isEncrypted && !message.text ? (
-              <p className="italic opacity-60">This message is encrypted</p>
+              <p className="italic opacity-60 flex items-center gap-1.5">
+                <FiLock className="h-3.5 w-3.5" /> This message is encrypted
+              </p>
             ) : (
-              message.text && <p>{message.text}</p>
+              message.text && <p className="whitespace-pre-wrap">{message.text}</p>
             )}
 
             {message.isEdited && (
               <span className="text-[10px] opacity-50 ml-1 italic">edited</span>
             )}
 
-            <div className={`flex items-center gap-1.5 mt-1 ${isOwn ? 'justify-end' : 'justify-start'}`}>
+            <div className={`flex items-center gap-1.5 mt-1.5 ${isOwn ? 'justify-end' : 'justify-start'}`}>
               <span className="text-[10px] opacity-60">
                 {new Date(message.createdAt || message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </span>
@@ -124,7 +131,7 @@ export default function ChatBubble({ message, isOwn, onReact, onEdit, onDelete }
                       <FiCheckCircle className="h-3 w-3 text-accent-light -ml-1.5" />
                     </div>
                   ) : message.delivered ? (
-                    <FiCheckCircle className="h-3 w-3 text-text-muted" />
+                    <FiCheckCircle className="h-3 w-3 text-white/60" />
                   ) : (
                     <FiCheckCircle className="h-3 w-3 opacity-40" />
                   )}
@@ -140,7 +147,7 @@ export default function ChatBubble({ message, isOwn, onReact, onEdit, onDelete }
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ type: 'spring', damping: 15, stiffness: 300 }}
-                    className="text-sm bg-black/20 backdrop-blur-sm rounded-full px-1.5 py-0.5 border border-white/5"
+                    className="text-sm bg-black/20 backdrop-blur-sm rounded-full px-1.5 py-0.5 border border-white/10"
                   >
                     {r.emoji}
                   </motion.span>
@@ -151,11 +158,12 @@ export default function ChatBubble({ message, isOwn, onReact, onEdit, onDelete }
         )}
 
         {!editing && (
-          <div className={`absolute top-0 ${isOwn ? 'left-0 -translate-x-[calc(100%+4px)]' : 'right-0 translate-x-[calc(100%+4px)]'} opacity-0 group-hover:opacity-100 transition-opacity z-10`}>
+          <div className={`absolute top-0 ${isOwn ? 'left-0 -translate-x-[calc(100%+6px)]' : 'right-0 translate-x-[calc(100%+6px)]'} opacity-0 group-hover:opacity-100 transition-opacity z-10`}>
             <div className="relative flex gap-0.5">
               <button
                 onClick={() => setShowReactions(!showReactions)}
                 className="p-1.5 rounded-full bg-dark-350/90 backdrop-blur-sm text-text-muted hover:text-text-primary hover:bg-dark-400 transition-all shadow-sm"
+                aria-label="Add reaction"
               >
                 <FiSmile className="h-3.5 w-3.5" />
               </button>
@@ -181,6 +189,7 @@ export default function ChatBubble({ message, isOwn, onReact, onEdit, onDelete }
                   <button
                     onClick={() => setShowMenu(!showMenu)}
                     className="p-1.5 rounded-full bg-dark-350/90 backdrop-blur-sm text-text-muted hover:text-text-primary hover:bg-dark-400 transition-all shadow-sm"
+                    aria-label="Message options"
                   >
                     <FiEdit2 className="h-3.5 w-3.5" />
                   </button>

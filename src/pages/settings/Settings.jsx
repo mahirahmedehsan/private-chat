@@ -29,6 +29,7 @@ import {
   FiFileText,
   FiCalendar,
   FiHeart,
+  FiSliders,
 } from 'react-icons/fi'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
@@ -51,7 +52,9 @@ function Toggle({ value, onChange }) {
   return (
     <button
       onClick={onChange}
-      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-accent/50 ${value ? 'bg-accent' : 'bg-dark-600'}`}
+      role="switch"
+      aria-checked={value}
+      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-accent/50 shadow-sm ${value ? 'bg-gradient-to-r from-accent to-accent-light shadow-accent/20' : 'bg-dark-600'}`}
     >
       <span
         className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${value ? 'translate-x-5' : 'translate-x-0'}`}
@@ -85,10 +88,10 @@ function VisToggle({ value, onChange }) {
 
 function SectionCard({ icon: Icon, label, description, children, className = '', accent = false }) {
   return (
-    <div className={`group flex items-center justify-between px-4 py-3.5 hover:bg-dark-300/50 transition-colors ${className}`}>
+    <div className={`group flex items-center justify-between px-4 py-3.5 hover:bg-dark-300/40 transition-colors ${className}`}>
       <div className="flex items-center gap-3 min-w-0">
         <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
-          accent ? 'bg-accent-bg' : 'bg-dark-400/80 group-hover:bg-dark-500/80'
+          accent ? 'bg-gradient-to-br from-accent/15 to-accent/5' : 'bg-dark-400/80 group-hover:bg-dark-500/80'
         }`}>
           {Icon && <Icon className={`h-4 w-4 ${accent ? 'text-accent-light' : 'text-text-muted'}`} />}
         </div>
@@ -99,6 +102,26 @@ function SectionCard({ icon: Icon, label, description, children, className = '',
       </div>
       <div className="shrink-0 ml-3">{children}</div>
     </div>
+  )
+}
+
+function SectionGroup({ icon: Icon, title, delay = 0, children }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay }}
+    >
+      <div className="flex items-center gap-2 mb-3 px-1">
+        <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-accent/15 to-accent/5 flex items-center justify-center">
+          <Icon className="h-3 w-3 text-accent-light" />
+        </div>
+        <h2 className="text-xs font-semibold text-text-muted uppercase tracking-widest">{title}</h2>
+      </div>
+      <div className="glass-card rounded-xl overflow-hidden divide-y divide-border card-shadow">
+        {children}
+      </div>
+    </motion.div>
   )
 }
 
@@ -270,13 +293,13 @@ export default function Settings() {
     <>
       <TopBar title={t('nav.settings')} />
       <div className="flex-1 overflow-y-auto scrollbar-gutter">
-        <div className="max-w-2xl mx-auto p-4 md:p-6 space-y-5">
+        <div className="max-w-2xl mx-auto p-4 md:p-6 space-y-6">
 
           {/* ── Profile Summary ── */}
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-dark-200 border border-dark-500 rounded-xl p-5 flex items-center gap-4 card-shadow"
+            className="glass-card rounded-2xl p-5 flex items-center gap-4 card-shadow"
           >
             <div className="relative shrink-0">
               <Avatar src={user?.photoURL} name={user?.displayName} size="lg" status="online" className="ring-2 ring-accent/30" />
@@ -300,254 +323,182 @@ export default function Settings() {
           </motion.div>
 
           {/* ── Preferences ── */}
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.05 }}
-          >
-            <div className="flex items-center gap-2 mb-3 px-1">
-              <div className="w-6 h-6 rounded-lg bg-accent-bg flex items-center justify-center">
-                <FiDroplet className="h-3 w-3 text-accent-light" />
+          <SectionGroup icon={FiSliders} title={t('settings.preferences')} delay={0.05}>
+            <SectionCard accent icon={darkMode ? FiMoon : FiSun} label={t('settings.dark.mode')} description={t('settings.dark.mode.desc')}>
+              <Toggle value={darkMode} onChange={() => dispatch(toggleDarkMode())} />
+            </SectionCard>
+            <SectionCard accent icon={notificationsEnabled ? FiBell : FiBellOff} label={t('settings.notifications')} description={t('settings.notifications.desc')}>
+              <Toggle value={notificationsEnabled} onChange={() => dispatch(toggleNotifications())} />
+            </SectionCard>
+            <SectionCard accent icon={FiVolume2} label={t('settings.sound')} description={t('settings.sound.desc')}>
+              <Toggle value={soundEnabled} onChange={() => dispatch(toggleSound())} />
+            </SectionCard>
+            <SectionCard accent icon={FiGlobe} label={t('settings.language')} description={t('settings.language.desc')}>
+              <div className="relative" ref={langRef}>
+                <button
+                  onClick={() => setLangOpen(!langOpen)}
+                  className="flex items-center gap-1.5 text-sm font-medium text-text-muted hover:text-text-primary transition-colors"
+                >
+                  <span>{languages.find((l) => l.code === locale)?.label || 'English'}</span>
+                  <FiChevronDown className={`h-3.5 w-3.5 transition-transform ${langOpen ? 'rotate-180' : ''}`} />
+                </button>
+                {langOpen && (
+                  <div className="absolute right-0 top-full mt-1.5 w-36 bg-dark-200 border border-border rounded-xl shadow-2xl py-1 z-50 backdrop-blur-md">
+                    {languages.map((lang) => (
+                      <button
+                        key={lang.code}
+                        onClick={() => { setLocale(lang.code); setLangOpen(false) }}
+                        className={`w-full flex items-center gap-2 px-3 py-2 text-sm transition-colors ${
+                          locale === lang.code
+                            ? 'text-accent-light bg-accent-bg'
+                            : 'text-text-primary hover:bg-dark-400'
+                        }`}
+                      >
+                        <span>{lang.label}</span>
+                        {locale === lang.code && <FiCheck className="h-3.5 w-3.5 ml-auto" />}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
-              <h2 className="text-xs font-semibold text-text-muted uppercase tracking-widest">{t('settings.preferences')}</h2>
-            </div>
-            <div className="bg-dark-200 border border-dark-500 rounded-xl overflow-hidden divide-y divide-dark-500 card-shadow">
-              <SectionCard accent icon={darkMode ? FiMoon : FiSun} label={t('settings.dark.mode')} description={t('settings.dark.mode.desc')}>
-                <Toggle value={darkMode} onChange={() => dispatch(toggleDarkMode())} />
-              </SectionCard>
-              <SectionCard accent icon={notificationsEnabled ? FiBell : FiBellOff} label={t('settings.notifications')} description={t('settings.notifications.desc')}>
-                <Toggle value={notificationsEnabled} onChange={() => dispatch(toggleNotifications())} />
-              </SectionCard>
-              <SectionCard accent icon={FiVolume2} label={t('settings.sound')} description={t('settings.sound.desc')}>
-                <Toggle value={soundEnabled} onChange={() => dispatch(toggleSound())} />
-              </SectionCard>
-              <SectionCard accent icon={FiGlobe} label={t('settings.language')} description={t('settings.language.desc')}>
-                <div className="relative" ref={langRef}>
-                  <button
-                    onClick={() => setLangOpen(!langOpen)}
-                    className="flex items-center gap-1.5 text-sm font-medium text-text-muted hover:text-text-primary transition-colors"
-                  >
-                    <span>{languages.find((l) => l.code === locale)?.label || 'English'}</span>
-                    <FiChevronDown className={`h-3.5 w-3.5 transition-transform ${langOpen ? 'rotate-180' : ''}`} />
-                  </button>
-                  {langOpen && (
-                    <div className="absolute right-0 top-full mt-1.5 w-36 bg-dark-200 border border-dark-600 rounded-xl shadow-2xl py-1 z-50">
-                      {languages.map((lang) => (
-                        <button
-                          key={lang.code}
-                          onClick={() => { setLocale(lang.code); setLangOpen(false) }}
-                          className={`w-full flex items-center gap-2 px-3 py-2 text-sm transition-colors ${
-                            locale === lang.code
-                              ? 'text-accent-light bg-accent/10'
-                              : 'text-text-primary hover:bg-dark-400'
-                          }`}
-                        >
-                          <span>{lang.label}</span>
-                          {locale === lang.code && <FiCheck className="h-3.5 w-3.5 ml-auto" />}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </SectionCard>
-            </div>
-          </motion.div>
+            </SectionCard>
+          </SectionGroup>
 
           {/* ── Privacy & Security ── */}
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-          >
-            <div className="flex items-center gap-2 mb-3 px-1">
-              <div className="w-6 h-6 rounded-lg bg-accent-bg flex items-center justify-center">
-                <FiShield className="h-3 w-3 text-accent-light" />
-              </div>
-              <h2 className="text-xs font-semibold text-text-muted uppercase tracking-widest">{t('settings.privacy')}</h2>
-            </div>
-            <div className="bg-dark-200 border border-dark-500 rounded-xl overflow-hidden divide-y divide-dark-500 card-shadow">
-              <SectionCard accent icon={FiShield} label={t('settings.encryption')} description={t('settings.encryption.desc')}>
-                <span className={`text-sm font-medium ${e2eeEnabled ? 'text-success' : 'text-text-muted'}`}>
-                  {e2eeEnabled ? t('settings.encryption.active') : t('settings.encryption.not.configured')}
-                </span>
-              </SectionCard>
-              <SectionCard
-                accent
-                icon={onlineStatusVisible ? FiEye : FiEyeOff}
-                label={t('settings.online.status')}
-                description={t('settings.online.status.desc')}
-              >
-                <Toggle value={onlineStatusVisible} onChange={handleOnlineStatusToggle} />
-              </SectionCard>
-            </div>
-          </motion.div>
+          <SectionGroup icon={FiShield} title={t('settings.privacy')} delay={0.1}>
+            <SectionCard accent icon={FiShield} label={t('settings.encryption')} description={t('settings.encryption.desc')}>
+              <span className={`text-sm font-medium ${e2eeEnabled ? 'text-success' : 'text-text-muted'}`}>
+                {e2eeEnabled ? t('settings.encryption.active') : t('settings.encryption.not.configured')}
+              </span>
+            </SectionCard>
+            <SectionCard
+              accent
+              icon={onlineStatusVisible ? FiEye : FiEyeOff}
+              label={t('settings.online.status')}
+              description={t('settings.online.status.desc')}
+            >
+              <Toggle value={onlineStatusVisible} onChange={handleOnlineStatusToggle} />
+            </SectionCard>
+          </SectionGroup>
 
           {/* ── Profile Visibility ── */}
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.12 }}
-          >
-            <div className="flex items-center gap-2 mb-3 px-1">
-              <div className="w-6 h-6 rounded-lg bg-accent-bg flex items-center justify-center">
-                <FiEye className="h-3 w-3 text-accent-light" />
-              </div>
-              <h2 className="text-xs font-semibold text-text-muted uppercase tracking-widest">Profile Visibility</h2>
-            </div>
-            <div className="bg-dark-200 border border-dark-500 rounded-xl overflow-hidden divide-y divide-dark-500 card-shadow">
-              <SectionCard icon={FiMail} label="Email" description="Control who can see your email">
-                <VisToggle value={emailVis} onChange={(v) => { setEmailVis(v); handleVisChange('emailVisibility', v) }} />
-              </SectionCard>
-              <SectionCard icon={FiFileText} label="Bio" description="Control who can see your bio">
-                <VisToggle value={bioVis} onChange={(v) => { setBioVis(v); handleVisChange('bioVisibility', v) }} />
-              </SectionCard>
-              <SectionCard icon={FiMapPin} label="Address" description="Control who can see your address">
-                <VisToggle value={addressVis} onChange={(v) => { setAddressVis(v); handleVisChange('addressVisibility', v) }} />
-              </SectionCard>
-              <SectionCard icon={FiCalendar} label="Birthday" description="Control who can see your birthday">
-                <VisToggle value={birthdayVis} onChange={(v) => { setBirthdayVis(v); handleVisChange('birthdayVisibility', v) }} />
-              </SectionCard>
-              <SectionCard icon={FiHeart} label="Gender" description="Control who can see your gender">
-                <VisToggle value={genderVis} onChange={(v) => { setGenderVis(v); handleVisChange('genderVisibility', v) }} />
-              </SectionCard>
-            </div>
-          </motion.div>
+          <SectionGroup icon={FiEye} title="Profile Visibility" delay={0.12}>
+            <SectionCard icon={FiMail} label="Email" description="Control who can see your email">
+              <VisToggle value={emailVis} onChange={(v) => { setEmailVis(v); handleVisChange('emailVisibility', v) }} />
+            </SectionCard>
+            <SectionCard icon={FiFileText} label="Bio" description="Control who can see your bio">
+              <VisToggle value={bioVis} onChange={(v) => { setBioVis(v); handleVisChange('bioVisibility', v) }} />
+            </SectionCard>
+            <SectionCard icon={FiMapPin} label="Address" description="Control who can see your address">
+              <VisToggle value={addressVis} onChange={(v) => { setAddressVis(v); handleVisChange('addressVisibility', v) }} />
+            </SectionCard>
+            <SectionCard icon={FiCalendar} label="Birthday" description="Control who can see your birthday">
+              <VisToggle value={birthdayVis} onChange={(v) => { setBirthdayVis(v); handleVisChange('birthdayVisibility', v) }} />
+            </SectionCard>
+            <SectionCard icon={FiHeart} label="Gender" description="Control who can see your gender">
+              <VisToggle value={genderVis} onChange={(v) => { setGenderVis(v); handleVisChange('genderVisibility', v) }} />
+            </SectionCard>
+          </SectionGroup>
 
           {/* ── Encryption Keys ── */}
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15 }}
-          >
-            <div className="flex items-center gap-2 mb-3 px-1">
-              <div className="w-6 h-6 rounded-lg bg-accent-bg flex items-center justify-center">
-                <FiLock className="h-3 w-3 text-accent-light" />
-              </div>
-              <h2 className="text-xs font-semibold text-text-muted uppercase tracking-widest">{t('settings.e2ee')}</h2>
-            </div>
-            <div className="bg-dark-200 border border-dark-500 rounded-xl overflow-hidden divide-y divide-dark-500 card-shadow">
-              <SectionCard
-                accent
-                icon={FiKey}
-                label={t('settings.e2ee.keys')}
-                description={e2eeKeysExist ? t('settings.e2ee.keys.desc.ready') : t('settings.e2ee.keys.desc.notready')}
-              >
-                <div className="flex items-center gap-2">
-                  {e2eeKeysExist && (
-                    <button
-                      onClick={handleDeleteKeys}
-                      className="text-xs text-text-muted hover:text-danger transition-colors underline underline-offset-2"
-                    >
-                      {t('settings.e2ee.remove')}
-                    </button>
-                  )}
+          <SectionGroup icon={FiLock} title={t('settings.e2ee')} delay={0.15}>
+            <SectionCard
+              accent
+              icon={FiKey}
+              label={t('settings.e2ee.keys')}
+              description={e2eeKeysExist ? t('settings.e2ee.keys.desc.ready') : t('settings.e2ee.keys.desc.notready')}
+            >
+              <div className="flex items-center gap-2">
+                {e2eeKeysExist && (
                   <button
-                    onClick={e2eeKeysExist ? undefined : handleGenerateKeys}
-                    disabled={keyBusy || e2eeKeysExist}
-                    className={`flex items-center gap-1.5 text-sm font-medium transition-colors disabled:opacity-50 ${e2eeKeysExist ? 'text-success cursor-default' : 'text-accent hover:text-accent-light cursor-pointer'}`}
+                    onClick={handleDeleteKeys}
+                    className="text-xs text-text-muted hover:text-danger transition-colors underline underline-offset-2"
                   >
-                    {keyBusy ? (
-                      <FiLoader className="h-3.5 w-3.5 animate-spin" />
-                    ) : e2eeKeysExist ? (
-                      <FiCheck className="h-3.5 w-3.5" />
-                    ) : (
-                      <FiRefreshCw className="h-3.5 w-3.5" />
-                    )}
-                    {e2eeKeysExist ? t('settings.e2ee.keys.ready') : keyBusy ? t('settings.e2ee.keys.generating') : t('settings.e2ee.keys.generate')}
+                    {t('settings.e2ee.remove')}
                   </button>
-                </div>
-              </SectionCard>
-            </div>
-          </motion.div>
+                )}
+                <button
+                  onClick={e2eeKeysExist ? undefined : handleGenerateKeys}
+                  disabled={keyBusy || e2eeKeysExist}
+                  className={`flex items-center gap-1.5 text-sm font-medium transition-colors disabled:opacity-50 ${e2eeKeysExist ? 'text-success cursor-default' : 'text-accent hover:text-accent-light cursor-pointer'}`}
+                >
+                  {keyBusy ? (
+                    <FiLoader className="h-3.5 w-3.5 animate-spin" />
+                  ) : e2eeKeysExist ? (
+                    <FiCheck className="h-3.5 w-3.5" />
+                  ) : (
+                    <FiRefreshCw className="h-3.5 w-3.5" />
+                  )}
+                  {e2eeKeysExist ? t('settings.e2ee.keys.ready') : keyBusy ? t('settings.e2ee.keys.generating') : t('settings.e2ee.keys.generate')}
+                </button>
+              </div>
+            </SectionCard>
+          </SectionGroup>
 
           {/* ── Storage & Data ── */}
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <div className="flex items-center gap-2 mb-3 px-1">
-              <div className="w-6 h-6 rounded-lg bg-accent-bg flex items-center justify-center">
-                <FiCloud className="h-3 w-3 text-accent-light" />
-              </div>
-              <h2 className="text-xs font-semibold text-text-muted uppercase tracking-widest">{t('settings.storage')}</h2>
-            </div>
-            <div className="bg-dark-200 border border-dark-500 rounded-xl overflow-hidden divide-y divide-dark-500 card-shadow">
-              <SectionCard
-                accent
-                icon={FiCloud}
-                label={t('settings.drive.backup')}
-                description={isDriveConfigured ? t('settings.drive.backup.desc.on') : t('settings.drive.backup.desc.off')}
+          <SectionGroup icon={FiCloud} title={t('settings.storage')} delay={0.2}>
+            <SectionCard
+              accent
+              icon={FiCloud}
+              label={t('settings.drive.backup')}
+              description={isDriveConfigured ? t('settings.drive.backup.desc.on') : t('settings.drive.backup.desc.off')}
+            >
+              <button
+                onClick={handleDriveSetup}
+                disabled={driveBusy}
+                className={`flex items-center gap-1.5 text-sm font-medium transition-colors disabled:opacity-50 ${isDriveConfigured ? 'text-success cursor-default' : 'text-accent hover:text-accent-light cursor-pointer'}`}
               >
-                <button
-                  onClick={handleDriveSetup}
-                  disabled={driveBusy}
-                  className={`flex items-center gap-1.5 text-sm font-medium transition-colors disabled:opacity-50 ${isDriveConfigured ? 'text-success cursor-default' : 'text-accent hover:text-accent-light cursor-pointer'}`}
-                >
-                  {driveBusy ? (
-                    <FiLoader className="h-3.5 w-3.5 animate-spin" />
-                  ) : isDriveConfigured ? (
-                    <FiCheck className="h-3.5 w-3.5" />
-                  ) : null}
-                  {driveBusy ? t('settings.drive.connecting') : isDriveConfigured ? t('settings.drive.connected') : t('settings.drive.connect')}
-                </button>
-              </SectionCard>
-              <SectionCard
-                accent
-                icon={FiDownloadCloud}
-                label={t('settings.export')}
-                description={t('settings.export.desc')}
+                {driveBusy ? (
+                  <FiLoader className="h-3.5 w-3.5 animate-spin" />
+                ) : isDriveConfigured ? (
+                  <FiCheck className="h-3.5 w-3.5" />
+                ) : null}
+                {driveBusy ? t('settings.drive.connecting') : isDriveConfigured ? t('settings.drive.connected') : t('settings.drive.connect')}
+              </button>
+            </SectionCard>
+            <SectionCard
+              accent
+              icon={FiDownloadCloud}
+              label={t('settings.export')}
+              description={t('settings.export.desc')}
+            >
+              <button
+                onClick={handleExportData}
+                disabled={exportBusy}
+                className="flex items-center gap-1.5 text-sm font-medium text-accent hover:text-accent-light transition-colors disabled:opacity-50 cursor-pointer"
               >
-                <button
-                  onClick={handleExportData}
-                  disabled={exportBusy}
-                  className="flex items-center gap-1.5 text-sm font-medium text-accent hover:text-accent-light transition-colors disabled:opacity-50 cursor-pointer"
-                >
-                  {exportBusy ? <FiLoader className="h-3.5 w-3.5 animate-spin" /> : null}
-                  {exportBusy ? t('settings.export.progress') : t('settings.export.action')}
-                </button>
-              </SectionCard>
-            </div>
-          </motion.div>
+                {exportBusy ? <FiLoader className="h-3.5 w-3.5 animate-spin" /> : null}
+                {exportBusy ? t('settings.export.progress') : t('settings.export.action')}
+              </button>
+            </SectionCard>
+          </SectionGroup>
 
           {/* ── Account ── */}
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.25 }}
-          >
-            <div className="flex items-center gap-2 mb-3 px-1">
-              <div className="w-6 h-6 rounded-lg bg-accent-bg flex items-center justify-center">
-                <FiUser className="h-3 w-3 text-accent-light" />
-              </div>
-              <h2 className="text-xs font-semibold text-text-muted uppercase tracking-widest">{t('settings.account')}</h2>
-            </div>
-            <div className="bg-dark-200 border border-dark-500 rounded-xl overflow-hidden divide-y divide-dark-500 card-shadow">
-              <SectionCard accent icon={FiSmartphone} label={t('settings.user.id')} description={t('settings.user.id.desc')}>
-                <code className="text-xs text-text-muted bg-dark-400 px-2 py-1 rounded-md font-mono">
-                  {user?.uid ? `${user.uid.slice(0, 12)}...` : '-'}
-                </code>
-              </SectionCard>
-              <SectionCard accent icon={FiCloud} label={t('settings.drive.folder')} description={t('settings.drive.folder.desc')}>
-                <span className={`text-sm font-medium ${user?.driveFolderId ? 'text-success' : 'text-text-muted'}`}>
-                  {user?.driveFolderId ? t('settings.drive.folder.on') : t('settings.drive.folder.off')}
-                </span>
-              </SectionCard>
-            </div>
-          </motion.div>
+          <SectionGroup icon={FiUser} title={t('settings.account')} delay={0.25}>
+            <SectionCard accent icon={FiSmartphone} label={t('settings.user.id')} description={t('settings.user.id.desc')}>
+              <code className="text-xs text-text-muted bg-dark-400 px-2 py-1 rounded-md font-mono">
+                {user?.uid ? `${user.uid.slice(0, 12)}...` : '-'}
+              </code>
+            </SectionCard>
+            <SectionCard accent icon={FiCloud} label={t('settings.drive.folder')} description={t('settings.drive.folder.desc')}>
+              <span className={`text-sm font-medium ${user?.driveFolderId ? 'text-success' : 'text-text-muted'}`}>
+                {user?.driveFolderId ? t('settings.drive.folder.on') : t('settings.drive.folder.off')}
+              </span>
+            </SectionCard>
+          </SectionGroup>
 
           {/* ── Actions ── */}
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="space-y-2 pt-2"
+            className="space-y-3 pt-2"
           >
             <Button variant="danger" size="lg" className="w-full" icon={FiLogOut} onClick={handleLogout}>
               {t('settings.sign.out')}
             </Button>
 
-            <div className="bg-dark-200 border border-danger/20 rounded-xl overflow-hidden">
+            <div className="glass-card rounded-xl overflow-hidden border-danger/20 card-shadow">
               <div className="px-4 py-3 bg-danger/5 border-b border-danger/10">
                 <div className="flex items-center gap-2">
                   <FiAlertTriangle className="h-4 w-4 text-danger" />
@@ -596,7 +547,7 @@ export default function Settings() {
             value={deleteConfirmation}
             onChange={(e) => setDeleteConfirmation(e.target.value)}
             placeholder="DELETE MY DATA"
-            className="w-full bg-dark-400/80 border border-dark-500 rounded-xl px-4 py-2.5 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-danger/40"
+            className="w-full bg-dark-400/80 border border-border-light rounded-xl px-4 py-2.5 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-danger/40"
           />
 
           <div className="flex gap-2">

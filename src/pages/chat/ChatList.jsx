@@ -109,7 +109,7 @@ export default function ChatList() {
 
       <div className="flex-1 overflow-y-auto scrollbar-gutter">
         {isLoading ? (
-          <div className="py-2 space-y-1">
+          <div className="py-2 space-y-0.5">
             {Array.from({ length: 8 }).map((_, i) => (
               <ConversationSkeleton key={i} />
             ))}
@@ -121,7 +121,7 @@ export default function ChatList() {
               animate={{ opacity: 1, y: 0 }}
               className="text-center py-20 w-full max-w-sm"
             >
-              <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-accent/5 to-transparent border border-border-light flex items-center justify-center mx-auto mb-5">
+              <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-accent/5 to-transparent border border-border-light flex items-center justify-center mx-auto mb-5 shadow-lg shadow-accent/5">
                 <FiUsers className="h-8 w-8 text-accent-light" />
               </div>
               <h3 className="text-lg font-semibold text-text-primary mb-1.5">
@@ -136,7 +136,7 @@ export default function ChatList() {
               {!search && (
                 <button
                   onClick={() => setShowNewChat(true)}
-                  className="mt-5 inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold bg-accent text-white rounded-xl hover:bg-accent-hover transition-colors shadow-lg shadow-accent/20"
+                  className="mt-5 inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold bg-accent text-white rounded-xl hover:bg-accent-hover transition-all shadow-lg shadow-accent/20 hover:shadow-accent/30"
                 >
                   <FiPlus className="h-3.5 w-3.5" />
                   New Conversation
@@ -145,25 +145,27 @@ export default function ChatList() {
             </motion.div>
           </div>
         ) : (
-          <AnimatePresence>
-            {filteredConvs.map((conv) => (
-              <motion.div
-                key={conv.id}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
-                <ConversationItem
-                  conversation={conv}
-                  isActive={activeConversation?.id === conv.id}
-                  onClick={() => {
-                    dispatch(setActiveConversation(conv))
-                    navigate(`/chat/${conv.id}`)
-                  }}
-                />
-              </motion.div>
-            ))}
-          </AnimatePresence>
+          <div className="py-1">
+            <AnimatePresence initial={false}>
+              {filteredConvs.map((conv) => (
+                <motion.div
+                  key={conv.id}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <ConversationItem
+                    conversation={conv}
+                    isActive={activeConversation?.id === conv.id}
+                    onClick={() => {
+                      dispatch(setActiveConversation(conv))
+                      navigate(`/chat/${conv.id}`)
+                    }}
+                  />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
         )}
       </div>
 
