@@ -5,6 +5,8 @@ export const getAdminStats = async () => {
   return data
 }
 
+/* redeploy trigger */
+
 export const getAdminUsers = async ({ page = 1, limit = 20, search, role, banned } = {}) => {
   const { data } = await api.get('/admin/users', { params: { page, limit, search, role, banned } })
   return data
