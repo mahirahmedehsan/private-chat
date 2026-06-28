@@ -1,7 +1,9 @@
 import { lazy, Suspense, useEffect } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { useSocket } from './hooks/useSocket'
+import { getCurrentUser } from './api/auth'
+import { setUser } from './store/slices/authSlice'
 import ErrorBoundary from './components/ui/ErrorBoundary'
 import AppLayout from './components/layout/AppLayout'
 import { I18nProvider } from './locales/i18n.jsx'
@@ -51,7 +53,15 @@ function PageLoader() {
 
 function AppContent() {
   const { isAuthenticated } = useSelector((s) => s.auth)
+  const dispatch = useDispatch()
   useSocket()
+
+  useEffect(() => {
+    if (!isAuthenticated) return
+    getCurrentUser()
+      .then((u) => { if (u) dispatch(setUser(u)) })
+      .catch(() => {})
+  }, [isAuthenticated])
 
   if (!isAuthenticated) {
     return (
