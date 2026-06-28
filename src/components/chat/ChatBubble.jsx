@@ -4,7 +4,7 @@ import { FiSmile, FiEdit2, FiTrash2, FiCheck, FiX, FiCheckCircle, FiFile, FiLock
 
 const emojis = ['👍', '❤️', '😂', '😮', '😢', '🙏']
 
-export default function ChatBubble({ message, isOwn, onReact, onEdit, onDelete }) {
+export default function ChatBubble({ message, isOwn, onReact, onEdit, onDelete, onViewImage }) {
   const [showReactions, setShowReactions] = useState(false)
   const [showMenu, setShowMenu] = useState(false)
   const [editing, setEditing] = useState(false)
@@ -90,6 +90,7 @@ export default function ChatBubble({ message, isOwn, onReact, onEdit, onDelete }
                   <img
                     src={message.file.url}
                     alt={message.file.name}
+                    onClick={() => onViewImage?.(message.file.url)}
                     className="max-w-full rounded-xl max-h-64 object-cover cursor-pointer hover:opacity-90 transition-opacity"
                     loading="lazy"
                   />

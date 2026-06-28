@@ -31,6 +31,7 @@ export default function ChatRoom() {
   const [showInfo, setShowInfo] = useState(false)
   const [showScrollBtn, setShowScrollBtn] = useState(false)
   const [showMenu, setShowMenu] = useState(false)
+  const [viewingImage, setViewingImage] = useState(null)
   const [otherPublicKey, setOtherPublicKey] = useState(null)
   const [decryptedMessages, setDecryptedMessages] = useState({})
   const decryptedRef = useRef({})
@@ -658,6 +659,7 @@ export default function ChatRoom() {
                     onReact={handleReaction}
                     onEdit={handleEditMessage}
                     onDelete={handleDeleteMessage}
+                    onViewImage={setViewingImage}
                   />
                 )
               })}
@@ -738,6 +740,34 @@ export default function ChatRoom() {
         </div>
       )}
       <MessageInput onSend={handleSend} onTyping={handleTyping} disabled={isBlocked} />
+
+      <AnimatePresence>
+        {viewingImage && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm p-4"
+            onClick={() => setViewingImage(null)}
+          >
+            <button
+              onClick={() => setViewingImage(null)}
+              className="absolute top-4 right-4 p-2 rounded-full bg-black/40 text-white hover:bg-black/60 transition-colors"
+            >
+              <FiX className="h-6 w-6" />
+            </button>
+            <motion.img
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              src={viewingImage}
+              alt=""
+              className="max-w-full max-h-[85vh] rounded-2xl object-contain shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
