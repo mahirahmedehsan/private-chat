@@ -110,7 +110,7 @@ function PostCard({ note, currentUserId, onReact, onComment, onDelete, onDeleteC
       exit={{ opacity: 0, y: -12 }}
       transition={{ type: 'spring', damping: 25, stiffness: 250 }}
     >
-      <div className="bg-dark-150/70 backdrop-blur-sm border border-border rounded-2xl overflow-hidden hover:border-border-light hover:shadow-lg hover:shadow-black/10 transition-all duration-200 shadow-card post-card">
+      <div className="group bg-dark-150/70 backdrop-blur-sm border border-border rounded-2xl overflow-hidden hover:border-border-light hover:shadow-lg hover:shadow-black/10 transition-all duration-200 shadow-card post-card">
 
         <div className="flex items-start gap-3 px-4 pt-4">
           <button type="button" onClick={() => navigate(`/profile/${note.author?.uid}`)} className="shrink-0">

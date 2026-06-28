@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
+import { useQuery, useInfiniteQuery, useMutation } from '@tanstack/react-query'
 import { motion, AnimatePresence } from 'framer-motion'
-import { FiArrowLeft, FiPhone, FiVideo, FiInfo, FiMoreHorizontal, FiX, FiMail, FiCalendar, FiMessageSquare, FiSend, FiImage, FiFile, FiBell, FiUserX, FiUserCheck, FiSlash, FiBellOff, FiClock, FiLock, FiPlus } from 'react-icons/fi'
+import { FiArrowLeft, FiPhone, FiVideo, FiInfo, FiMoreHorizontal, FiX, FiMail, FiCalendar, FiMessageSquare, FiSend, FiImage, FiFile, FiBell, FiUserX, FiUserCheck, FiSlash, FiBellOff, FiClock, FiLock, FiFlag } from 'react-icons/fi'
 import { getMessages, sendMessage as apiSendMessage, editMessage as apiEditMessage, deleteMessage as apiDeleteMessage, toggleReaction } from '../../api/messages'
 import { getUser } from '../../api/users'
 import { removeFriend, blockUser, unblockUser, getFriendStatus } from '../../api/friends'
-import { setActiveSection } from '../../store/slices/uiSlice'
+import { createReport } from '../../api/admin'
+import { setActiveSection, addToast } from '../../store/slices/uiSlice'
 import { setMessages, addMessage, removeMessage, updateMessage, setTyping, updateConversationLastMessage, muteConversation, unmuteConversation } from '../../store/slices/chatSlice'
 import { getSocket } from '../../config/socket'
 import { encryptMessage, decryptMessage, getKeyPair } from '../../utils/encryption'
@@ -18,6 +19,8 @@ import TypingIndicator from '../../components/chat/TypingIndicator'
 import EmptyChat from '../../components/chat/EmptyChat'
 import Avatar from '../../components/ui/Avatar'
 import Badge from '../../components/ui/Badge'
+import Modal from '../../components/ui/Modal'
+import Button from '../../components/ui/Button'
 import { MessageSkeleton } from '../../components/ui/Skeleton'
 
 export default function ChatRoom() {
@@ -309,6 +312,20 @@ export default function ChatRoom() {
 
   const [customBlock, setCustomBlock] = useState(false)
   const [customMinutes, setCustomMinutes] = useState('')
+  const [showReportModal, setShowReportModal] = useState(false)
+  const [reportReason, setReportReason] = useState('')
+  const [reportDesc, setReportDesc] = useState('')
+
+  const reportMutation = useMutation({
+    mutationFn: (payload) => createReport(payload),
+    onSuccess: () => {
+      dispatch(addToast({ type: 'success', title: 'Report submitted' }))
+      setShowReportModal(false)
+      setReportReason('')
+      setReportDesc('')
+    },
+    onError: () => dispatch(addToast({ type: 'error', title: 'Failed to submit report' })),
+  })
 
   const blockDurations = [
     { label: '30 minutes', minutes: 30 },
@@ -536,6 +553,16 @@ export default function ChatRoom() {
                       )}
                     </div>
                   )}
+                </div>
+                <div className="border-t border-border mx-3 my-2" />
+                <div className="px-3">
+                  <button
+                    onClick={() => setShowReportModal(true)}
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-text-primary hover:bg-dark-350/60 transition-colors"
+                  >
+                    <FiFlag className="h-4 w-4 text-text-muted shrink-0" />
+                    Report User
+                  </button>
                 </div>
                 <div className="border-t border-border mx-3 my-2" />
                 <div className="px-3">
@@ -768,6 +795,65 @@ export default function ChatRoom() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <Modal
+        isOpen={showReportModal}
+        onClose={() => { setShowReportModal(false); setReportReason(''); setReportDesc('') }}
+        title="Report User"
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-text-secondary">
+            Report <strong className="text-text-primary">{otherUser?.displayName}</strong> for violating the community guidelines.
+          </p>
+          <div>
+            <label className="text-xs text-text-muted block mb-1.5">Reason</label>
+            <select
+              value={reportReason}
+              onChange={(e) => setReportReason(e.target.value)}
+              className="w-full bg-dark-350/80 border border-border-light rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-accent/30"
+            >
+              <option value="">Select a reason</option>
+              <option value="Harassment">Harassment</option>
+              <option value="Spam">Spam</option>
+              <option value="Inappropriate content">Inappropriate content</option>
+              <option value="Fake account">Fake account</option>
+              <option value="Hate speech">Hate speech</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div>
+            <label className="text-xs text-text-muted block mb-1.5">Description (optional)</label>
+            <textarea
+              value={reportDesc}
+              onChange={(e) => setReportDesc(e.target.value)}
+              rows={3}
+              maxLength={500}
+              placeholder="Provide additional details..."
+              className="w-full bg-dark-350/80 border border-border-light rounded-xl px-4 py-2.5 text-sm text-text-primary placeholder-text-muted resize-none focus:outline-none focus:ring-2 focus:ring-accent/30"
+            />
+          </div>
+          <div className="flex gap-2">
+            <Button
+              variant="ghost"
+              size="md"
+              className="flex-1"
+              onClick={() => { setShowReportModal(false); setReportReason(''); setReportDesc('') }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="danger"
+              size="md"
+              className="flex-1"
+              disabled={!reportReason}
+              onClick={() => reportMutation.mutate({ targetType: 'user', targetId: otherUser?.uid, reason: reportReason, description: reportDesc })}
+              loading={reportMutation.isPending}
+            >
+              Submit Report
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   )
 }
