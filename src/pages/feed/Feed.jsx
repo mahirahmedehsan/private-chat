@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux'
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   FiSmile, FiMessageCircle, FiSend, FiTrash2, FiGlobe, FiLock,
-  FiImage, FiX, FiCamera, FiChevronDown, FiHeart, FiMoreHorizontal, FiFlag, FiUserCheck,
+  FiImage, FiX, FiCamera, FiChevronDown, FiHeart, FiMoreHorizontal, FiFlag, FiUserCheck, FiShare2,
 } from 'react-icons/fi'
 import { getFeed, createNote, deleteNote, toggleReaction, addComment, toggleCommentReaction, deleteComment } from '../../api/notes'
 import { uploadFile } from '../../api/upload'
@@ -104,6 +104,16 @@ function PostCard({ note, currentUserId, onReact, onComment, onDelete, onDeleteC
   const allImages = note.images || []
   const hasImages = allImages.length > 0
 
+  const handleShare = async () => {
+    const url = `${window.location.origin}/feed?post=${note._id}`
+    if (navigator.share) {
+      try { await navigator.share({ title: 'Check out this post', text: note.content || '', url }) } catch {}
+    } else {
+      try { await navigator.clipboard.writeText(url); dispatch(addToast({ type: 'success', title: 'Link copied' })) } catch {}
+    }
+    setShowMenu(false)
+  }
+
   useEffect(() => {
     if (!showMenu) return
     const handler = (e) => {
@@ -164,6 +174,12 @@ function PostCard({ note, currentUserId, onReact, onComment, onDelete, onDeleteC
               </button>
               {showMenu && (
                 <div className="absolute right-0 top-full mt-1 w-36 bg-dark-150/95 backdrop-blur-xl border border-border-light rounded-xl shadow-2xl py-1 z-50">
+                  <button
+                    onClick={handleShare}
+                    className="w-full flex items-center gap-2 px-3 py-2 text-sm text-text-primary hover:bg-dark-350/60 transition-colors"
+                  >
+                    <FiShare2 className="h-4 w-4" /> Share
+                  </button>
                   {isAuthor ? (
                     <button
                       onClick={() => { setShowMenu(false); onDelete(note._id) }}
