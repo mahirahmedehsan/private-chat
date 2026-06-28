@@ -23,6 +23,7 @@ const AdminUsers = lazy(() => import('./pages/admin/AdminUsers'))
 const AdminNotes = lazy(() => import('./pages/admin/AdminNotes'))
 const AdminReports = lazy(() => import('./pages/admin/AdminReports'))
 const AdminChat = lazy(() => import('./pages/admin/AdminChat'))
+const AdminHelpLine = lazy(() => import('./pages/admin/AdminHelpLine'))
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated } = useSelector((s) => s.auth)
@@ -101,6 +102,7 @@ function AppContent() {
           <Route path="/admin/notes" element={<AdminRoute><AdminNotes /></AdminRoute>} />
           <Route path="/admin/reports" element={<AdminRoute><AdminReports /></AdminRoute>} />
           <Route path="/admin/chat" element={<AdminRoute><AdminChat /></AdminRoute>} />
+          <Route path="/admin/help-line" element={<AdminRoute><AdminHelpLine /></AdminRoute>} />
           <Route path="*" element={<Navigate to="/chat" replace />} />
         </Route>
       </Routes>

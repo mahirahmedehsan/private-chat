@@ -30,6 +30,7 @@ import {
   FiCalendar,
   FiHeart,
   FiSliders,
+  FiMessageSquare,
 } from 'react-icons/fi'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
@@ -47,6 +48,7 @@ import TopBar from '../../components/layout/TopBar'
 import Button from '../../components/ui/Button'
 import Avatar from '../../components/ui/Avatar'
 import Modal from '../../components/ui/Modal'
+import HelpLineChat from '../../components/chat/HelpLineChat'
 
 function Toggle({ value, onChange }) {
   return (
@@ -148,6 +150,7 @@ export default function Settings() {
   const [keyBusy, setKeyBusy] = useState(false)
   const [e2eeKeysExist, setE2EEKeysExist] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [showHelpLine, setShowHelpLine] = useState(false)
   const [deleteConfirmation, setDeleteConfirmation] = useState('')
   const [deleteBusy, setDeleteBusy] = useState(false)
   const [exportBusy, setExportBusy] = useState(false)
@@ -486,6 +489,40 @@ export default function Settings() {
               </span>
             </SectionCard>
           </SectionGroup>
+
+          {/* ── Help Line ── */}
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25 }}
+          >
+            <div className="flex items-center gap-2 mb-3 px-1">
+              <div className="w-6 h-6 rounded-lg bg-dark-200 flex items-center justify-center">
+                <FiMessageSquare className="h-3 w-3 text-accent-light" />
+              </div>
+              <h2 className="text-xs font-semibold text-text-muted uppercase tracking-widest">Help Line</h2>
+            </div>
+            <div className="bg-dark-100 border border-dark-400 rounded-xl overflow-hidden">
+              <button
+                onClick={() => setShowHelpLine(!showHelpLine)}
+                className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-dark-150 transition-colors"
+              >
+                <div className="w-8 h-8 rounded-lg bg-accent-bg flex items-center justify-center shrink-0">
+                  <FiMessageSquare className="h-4 w-4 text-accent-light" />
+                </div>
+                <div className="text-left flex-1 min-w-0">
+                  <p className="text-sm font-medium text-text-primary">Talk to Admins</p>
+                  <p className="text-xs text-text-muted">Get help or report issues directly</p>
+                </div>
+                <FiChevronDown className={`h-4 w-4 text-text-muted transition-transform ${showHelpLine ? 'rotate-180' : ''}`} />
+              </button>
+              {showHelpLine && (
+                <div className="border-t border-dark-400" style={{ height: '400px' }}>
+                  <HelpLineChat />
+                </div>
+              )}
+            </div>
+          </motion.div>
 
           {/* ── Actions ── */}
           <motion.div

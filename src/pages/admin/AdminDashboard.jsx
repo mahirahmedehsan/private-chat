@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
-import { FiUsers, FiFileText, FiMessageSquare, FiAlertTriangle, FiXCircle, FiGlobe, FiShield } from 'react-icons/fi'
+import { FiUsers, FiFileText, FiMessageSquare, FiAlertTriangle, FiXCircle, FiGlobe, FiShield, FiHelpCircle } from 'react-icons/fi'
 import { getAdminStats } from '../../api/admin'
 import TopBar from '../../components/layout/TopBar'
 
@@ -65,6 +65,7 @@ export default function AdminDashboard() {
                 { label: 'Moderate Posts', path: '/admin/notes', icon: FiFileText },
                 { label: 'View Reports', path: '/admin/reports', icon: FiAlertTriangle },
                 { label: 'Chat as Admin', path: '/admin/chat', icon: FiMessageSquare },
+                { label: 'Help Line', path: '/admin/help-line', icon: FiHelpCircle },
               ].map((action) => (
                 <button
                   key={action.label}
